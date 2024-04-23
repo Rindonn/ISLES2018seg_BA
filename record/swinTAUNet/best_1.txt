@@ -1,0 +1,1 @@
+fold is 1,best epoch is 62, best dice is 67.585
