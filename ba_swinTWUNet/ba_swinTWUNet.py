@@ -4,7 +4,7 @@
 @ Author: Rindon
 @ Date: 2024-04-18 14:55:42
 @ LastEditors: Rindon
-@ LastEditTime: 2024-04-21 15:58:42
+@ LastEditTime: 2024-04-23 14:49:48
 @ Description: unet With swinT
 '''
 import torch
@@ -197,10 +197,10 @@ class swinTWUNet(nn.Module):
         #BLOCK 1
         x = self.upconv1(x)
         #skip1
-        #x = torch.cat((x, enc3), dim=1)
-        #x = self.conv10(x)
+        x = torch.cat((x, enc3), dim=1)
+        x = self.conv10(x)
         #x = F.relu(self.norm10(x))
-        #x = F.relu(x)
+        x = F.relu(x)
         x = self.conv11(x)
         x = F.relu(self.norm11(x))
         x = self.swint7(x)
@@ -209,10 +209,10 @@ class swinTWUNet(nn.Module):
         #BLOCK 2
         x = self.upconv2(x)
         #skip2
-        #x = torch.cat((x, enc2), dim=1)
-        #x = self.conv12(x)
+        x = torch.cat((x, enc2), dim=1)
+        x = self.conv12(x)
         #x = F.relu(self.norm12(x))
-        #x = F.relu(x)
+        x = F.relu(x)
         x = self.conv13(x)
         x = F.relu(self.norm13(x))
         x = self.swint9(x)
