@@ -91,7 +91,7 @@ def train_model():
         bce_loss = nn.BCELoss()
         focal_loss = FocalLoss()
         focaltversky_loss = FocalTverskyLoss()
-        #optimizer = Lion(model.parameters(), lr=5e-4)
+        #optimizer = Lion(model.parameters(), lr=1e-5)
         optimizer = AdamW(model.parameters(), lr=1e-4, weight_decay=0.05)
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer,'min',factor=0.9,patience=5) # 3, 0.6
 

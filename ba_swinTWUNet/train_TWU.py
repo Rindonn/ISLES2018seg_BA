@@ -70,7 +70,7 @@ def train_model():
 
         # Define data loaders for training and testing data in this fold
         trainloader = DataLoader(training_part,
-                                batch_size=4,
+                                batch_size=6,
                                 sampler=train_subsampler)
         
         validationloader = DataLoader(training_part,
@@ -91,9 +91,9 @@ def train_model():
         bce_loss = nn.BCELoss()
         focal_loss = FocalLoss()
         focaltversky_loss = FocalTverskyLoss()
-        #optimizer = Lion(model.parameters(), lr=5e-4)
-        optimizer = AdamW(model.parameters(), lr=5e-6, weight_decay=0.05)
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer,'min',factor=0.95,patience=3) # 3, 0.6
+        optimizer = Lion(model.parameters(), lr=0.000523)
+        #optimizer = AdamW(model.parameters(), lr=0.000523, weight_decay=0.05)
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer,'min',factor=0.9,patience=3) # 3, 0.6
 
         for epoch in range(300):
 
