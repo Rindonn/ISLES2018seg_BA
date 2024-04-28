@@ -84,7 +84,7 @@ class swinTAUNet(nn.Module):
                     window_size=8, qkv_bias=False, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=True)
         #128*32*32
-        self.conv8 = nn.Conv2d(256, 128, 3, padding=1, bias=False)
+        self.conv8 = nn.Conv2d(256, 128, 1, padding=0, bias=False)
         self.norm8 = nn.GroupNorm(4, 128)
 
         #############

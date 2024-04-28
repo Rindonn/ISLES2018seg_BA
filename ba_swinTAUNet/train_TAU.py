@@ -22,6 +22,7 @@ from m_deeplab import DeepLabV3
 from m_DeepTransUnet import DeepTransUnet
 '''
 from ba_swinTAUNet import swinTAUNet
+from ba_TAU_module import TAU_module
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -40,7 +41,7 @@ def weight_init(m):
 
 # Configuration options
 #k_folds = 5
-k_folds = 10
+k_folds = 5
 # For fold results
 results = {}
 
@@ -58,7 +59,7 @@ def train_model():
 
         # 创建csv文件
         df = pd.DataFrame(columns=['Time', 'Step', 'Train loss', 'Validation loss', 'Validation dice'])# 列名
-        df.to_csv(f'ba_swinTAUNet_400-fold-{fold}.csv',index=False)  
+        df.to_csv(f'ba_swinTAUNet_300-fold-{fold}.csv',index=False)  
 
         # Print
         print(f'FOLD {fold}')
@@ -80,7 +81,7 @@ def train_model():
         print(len(validationloader))
 
         # Init the network
-        model = swinTAUNet()
+        model = TAU_module()
         #model = DeepTransUnet()
         #加载权重继续训练
         #model.load_state_dict(torch.load('ba_swinTNet.pth'))
@@ -92,10 +93,10 @@ def train_model():
         focal_loss = FocalLoss()
         focaltversky_loss = FocalTverskyLoss()
         #optimizer = Lion(model.parameters(), lr=5e-4)
-        optimizer = AdamW(model.parameters(), lr=0.000123, weight_decay=0.05)
+        optimizer = AdamW(model.parameters(), lr=0.0000523, weight_decay=0.05)
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer,'min',factor=0.9,patience=3) # 3, 0.6
 
-        for epoch in range(400):
+        for epoch in range(300):
 
             # Print epoch
             print(f'Starting epoch {epoch+1}')
@@ -142,7 +143,7 @@ def train_model():
             # print('Starting testing')
 
             # Saving the model
-            save_path = f'ba_swinTAUNet_400-fold-{fold}.pth'
+            save_path = f'ba_swinTAUNet_300-fold-{fold}.pth'
             torch.save(model.state_dict(), save_path)
 
             train_loss = training_loss/len(trainloader)
@@ -199,7 +200,7 @@ def train_model():
             #将数据保存为一维列表
             list = [Time, Step, Train_loss, Validation_loss, Validation_dice]
             file = pd.DataFrame([list])
-            file.to_csv(f'ba_swinTAUNet_400-fold-{fold}.csv', mode='a', header=False, index=False)
+            file.to_csv(f'ba_swinTAUNet_300-fold-{fold}.csv', mode='a', header=False, index=False)
         #记录模型最好的信息
         with open(f"best_{fold}.txt","w") as f:
             f.write(f"fold is {fold},best epoch is {max_epoch}, best dice is {max_acc}") 

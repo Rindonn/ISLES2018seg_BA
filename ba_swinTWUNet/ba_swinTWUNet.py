@@ -4,7 +4,7 @@
 @ Author: Rindon
 @ Date: 2024-04-18 14:55:42
 @ LastEditors: Rindon
-@ LastEditTime: 2024-04-27 10:35:33
+@ LastEditTime: 2024-04-28 09:08:24
 @ Description: unet With swinT
 '''
 import torch
@@ -128,6 +128,7 @@ class swinTWUNet(nn.Module):
         x = self.conv1(x)
         #x = F.gelu(x)
         x = F.gelu(self.norm1(x))
+        x = self.swint1(x)
         #x = self.conv2(x)
         #x = F.gelu(self.norm2(x))
         #x = F.gelu(x)
@@ -140,19 +141,21 @@ class swinTWUNet(nn.Module):
         #BLOCK 2
         x = self.conv4(x)
         x = F.gelu(self.norm4(x))
+        x = self.swint3(x)
         #x = F.gelu(x)
         #x = self.conv5(x)
         #x = F.gelu(self.norm5(x))
         #x = F.gelu(x)
         x = self.conv6(x)
         x = F.gelu(self.norm6(x))
-        #x = self.swint3(x)
         enc2 = self.swint3(x)
+        #x = self.swint3(x)
         x = self.swint4(x)
         
         #BLOCK 3
         x = self.conv7(x)
         x = F.gelu(self.norm7(x))
+        x = self.swint5(x)
         #x = F.gelu(x)
         #x = self.conv8(x)
         #x = F.gelu(x)
@@ -194,9 +197,9 @@ class swinTWUNet(nn.Module):
         #BLOCK 2
         x = self.upconv2(x)
         #skip2
-        #x = torch.cat((x, enc2), dim=1)
-        #x = self.conv12(x)
-        #x = F.gelu(self.norm12(x))
+        x = torch.cat((x, enc2), dim=1)
+        x = self.conv12(x)
+        x = F.gelu(self.norm12(x))
         #x = F.gelu(x)
         x = self.conv13(x)
         x = F.gelu(self.norm13(x))
