@@ -4,3 +4,13 @@ record/Others/ba_DeepLabV3_300-fold-1.pth
 record/Others/ba_DeepLabV3_300-fold-2.pth
 record/Others/ba_DeepLabV3_300-fold-3.pth
 record/Others/ba_DeepLabV3_300-fold-4.pth
+ba_swinTWUNet_300-fold-2.pth
+ba_swinTWUNet_300-fold-0.pth
+ba_swinTWUNet_300-fold-1.pth
+ba_swinTWUNet_300-fold-3.pth
+ba_swinTWUNet_300-fold-4.pth
+ba_swinTWUNet_best_0.pth
+ba_swinTWUNet_best_1.pth
+ba_swinTWUNet_best_2.pth
+ba_swinTWUNet_best_3.pth
+ba_swinTWUNet_best_4.pth
