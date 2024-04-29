@@ -1,0 +1,8 @@
+modTAU 70%
+swinTAU 68%
+swinTU 65%
+deeplabv3 35%
+deeptransunet 60.7%
+fcn8s 57%
+transunet 60%
+unet 59%

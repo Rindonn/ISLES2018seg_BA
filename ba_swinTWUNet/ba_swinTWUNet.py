@@ -4,7 +4,7 @@
 @ Author: Rindon
 @ Date: 2024-04-18 14:55:42
 @ LastEditors: Rindon
-@ LastEditTime: 2024-04-28 09:08:24
+@ LastEditTime: 2024-04-29 09:09:32
 @ Description: unet With swinT
 '''
 import torch
@@ -81,7 +81,7 @@ class swinTWUNet(nn.Module):
         self.convB2 = ODConv2d(256, 256, 3, padding=1)
         self.normB2 = nn.BatchNorm2d(256)
         #gelu
-        self.swintB1 = swinT.SwinT(in_channels=256, input_resolution=(32,32), num_heads=16, 
+        self.swintB1 = swinT.SwinT(in_channels=256, input_resolution=(32,32), num_heads=8, 
                     window_size=32, qkv_bias=False, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=False)
         self.swintB2 = swinT.SwinT(in_channels=256, input_resolution=(32,32), num_heads=16, 
