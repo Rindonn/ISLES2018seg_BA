@@ -4,7 +4,7 @@
 @ Author: Rindon
 @ Date: 2024-04-16 11:35:28
 @ LastEditors: Rindon
-@ LastEditTime: 2024-04-28 15:03:45
+@ LastEditTime: 2024-04-30 09:37:27
 @ Description: swinT and unet
 '''
 import torch
@@ -12,6 +12,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import swinT
 from ScConv import ScConv
+from HWD import Down_wt
 
 class TAU_module(nn.Module):
     def __init__(self):
@@ -23,27 +24,27 @@ class TAU_module(nn.Module):
         self.conv2 = ScConv(32)
         self.norm2 = nn.GroupNorm(4, 32)
         #gelu
-        self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)
+        self.pool1 = Down_wt(32,64)
         #32*128*128
 
         #DOWN BLOCK 2-1 #32*128*128
-        self.conv3 = nn.Conv2d(32, 64, 3, padding=1, bias=False)
+        self.conv3 = ScConv(64)
         self.norm3 = nn.GroupNorm(4, 64)
         #gelu
         self.conv4 = ScConv(64)
         self.norm4 = nn.GroupNorm(4, 64)
         #gelu
-        self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)
+        self.pool2 = Down_wt(64,128)
         #64*64*64
 
         #DOWN BLOCK 3-1 #64*64*64
-        self.conv5 = nn.Conv2d(64, 128, 3, padding=1, bias=False)
+        self.conv5 = ScConv(128)
         self.norm5 = nn.GroupNorm(4, 128)
         #gelu
         self.conv6 = ScConv(128)
         self.norm6 = nn.GroupNorm(4, 128)
         #gelu
-        self.pool3 = nn.MaxPool2d(kernel_size=2, stride=2)
+        self.pool3 = Down_wt(128,128)
         #128*32*32
 
         # DOWN BLOCK 1-2 #5*256*256
