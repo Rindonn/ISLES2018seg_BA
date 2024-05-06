@@ -4,7 +4,7 @@
 @ Author: Rindon
 @ Date: 2024-04-18 14:55:42
 @ LastEditors: Rindon
-@ LastEditTime: 2024-04-30 10:16:20
+@ LastEditTime: 2024-05-03 13:53:35
 @ Description: unet With swinT
 '''
 import torch
@@ -18,15 +18,15 @@ class swinTWUNet(nn.Module):
         super(swinTWUNet, self).__init__()
 
         # DOWN BLOCK 1 #5*256*256
-        self.conv1 = nn.Conv2d(5, 32, 3, padding=1)
-        self.norm1 = nn.LayerNorm(32)
+        self.conv1 = nn.Conv2d(5, 32, 3,padding = 1)
+        self.norm1 = nn.GroupNorm(4,32)
         #gelu
         
-        self.conv2 = ScConv(32)
-        self.norm2 = nn.LayerNorm(32)
+        self.conv2 = nn.Conv2d(32, 32, 3,padding = 1)
+        self.norm2 = nn.GroupNorm(4,32)
         #gelu
-        self.conv3 = ScConv(32)
-        self.norm3 = nn.LayerNorm(32)
+        self.conv3 = nn.Conv2d(32, 32, 3,padding = 1)
+        self.norm3 = nn.GroupNorm(4,32)
         #gelu
         self.swint1 = swinT.SwinT(in_channels=32, input_resolution=(256,256), num_heads=4, 
                     window_size=8, qkv_bias=False, drop=0.1,
@@ -37,85 +37,106 @@ class swinTWUNet(nn.Module):
         #64*128*128
 
         #DOWN BLOCK 2 #64*128*128
-        self.conv4 = ScConv(64)
-        self.norm4 = nn.LayerNorm(64)
+        self.conv4 = nn.Conv2d(64, 64, 3,padding = 1)
+        self.norm4 = nn.GroupNorm(4,64)
         #gelu
-        self.conv5 = ScConv(64)
-        self.norm5 = nn.LayerNorm(64)
+        self.conv5 = nn.Conv2d(64, 64, 3,padding = 1)
+        self.norm5 = nn.GroupNorm(4,64)
         #gelu
-        self.conv6 = ScConv(64)
-        self.norm6 = nn.LayerNorm(64)
+        self.conv6 = nn.Conv2d(64, 64, 3,padding = 1)
+        self.norm6 = nn.GroupNorm(4,64)
         #gelu
         self.swint3 = swinT.SwinT(in_channels=64, input_resolution=(128,128), num_heads=4, 
-                    window_size=16, qkv_bias=False, drop=0.1,
+                    window_size=8, qkv_bias=False, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=False)
         self.swint4 = swinT.SwinT(in_channels=64, input_resolution=(128,128), num_heads=4, 
-                    window_size=16, qkv_bias=False, drop=0.1,
+                    window_size=8, qkv_bias=False, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=True)
         #128*64*64
 
         #DOWN BLOCK 3 #128*64*64
-        self.conv7 = ScConv(128)
-        self.norm7 = nn.LayerNorm(128)
+        self.conv7 = nn.Conv2d(128, 128, 3,padding = 1)
+        self.norm7 = nn.GroupNorm(4,128)
         #gelu
-        self.conv8 = ScConv(128)
-        self.norm8 = nn.LayerNorm(128)
+        self.conv8 = nn.Conv2d(128, 128, 3,padding = 1)
+        self.norm8 = nn.GroupNorm(4,128)
         #gelu
-        self.conv9 = ScConv(128)
-        self.norm9 = nn.LayerNorm(128)
+        self.conv9 = nn.Conv2d(128, 128, 3,padding = 1)
+        self.norm9 = nn.GroupNorm(4,128)
         #gelu
-        self.swint5 = swinT.SwinT(in_channels=128, input_resolution=(64,64), num_heads=8, 
-                    window_size=16, qkv_bias=False, drop=0.1,
+        self.swint5 = swinT.SwinT(in_channels=128, input_resolution=(64,64), num_heads=4, 
+                    window_size=8, qkv_bias=False, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=False)
-        self.swint6 = swinT.SwinT(in_channels=128, input_resolution=(64,64), num_heads=8, 
-                    window_size=16, qkv_bias=False, drop=0.1,
+        self.swint6 = swinT.SwinT(in_channels=128, input_resolution=(64,64), num_heads=4, 
+                    window_size=8, qkv_bias=False, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=True)
         #256*32*32
         
         #############
         
-        #Bottleneck #
-        self.convB1 = ScConv(256)
-        self.normB1 = nn.LayerNorm(256)
+        #Block4 #256*32*32
+        self.conv41 = nn.Conv2d(256, 256, 3,padding = 1)
+        self.norm41 = nn.GroupNorm(4,256)
         #gelu
-        self.convB2 = ScConv(256)
-        self.normB2 = nn.LayerNorm(256)
+        self.conv42 = nn.Conv2d(256, 256, 3,padding = 1)
+        self.norm42 = nn.GroupNorm(4,256)
         #gelu
-        self.swintB1 = swinT.SwinT(in_channels=256, input_resolution=(32,32), num_heads=8, 
-                    window_size=32, qkv_bias=False, drop=0.1,
+        self.swint7 = swinT.SwinT(in_channels=256, input_resolution=(32,32), num_heads=4, 
+                    window_size=8, qkv_bias=False, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=False)
-        self.swintB2 = swinT.SwinT(in_channels=256, input_resolution=(32,32), num_heads=16, 
-                    window_size=32, qkv_bias=False, drop=0.1,
-                    attn_drop=0.1, drop_path=0.1,downsample=False)
+        self.swint8 = swinT.SwinT(in_channels=256, input_resolution=(32,32), num_heads=4, 
+                    window_size=8, qkv_bias=False, drop=0.1,
+                    attn_drop=0.1, drop_path=0.1,downsample=True)
         
         #############
+
+        #############
         
+        #BottleNeck #512*16*16
+        self.convB1 = nn.Conv2d(512, 512, 3,padding = 1)
+        self.normB1 = nn.GroupNorm(4,512)
+        #gelu
+        self.convB2 = nn.Conv2d(512, 512, 3,padding = 1)
+        self.normB2 = nn.GroupNorm(4,512)
+        #gelu
+        
+        #############
+        #UP BLOCK 1#
+        self.upconv4 = nn.ConvTranspose2d(512, 256, kernel_size=2, stride=2)
+        self.conv16 = nn.Conv2d(256, 256, 3, padding=1, bias=False)
+        self.norm16 = nn.GroupNorm(4,256)
+        #gelu
+        self.conv17 = nn.Conv2d(256, 256, 3, padding=1, bias=False)
+        self.norm17 = nn.GroupNorm(4,256)
+        #gelu
+
+
         #UP BLOCK 1#
         self.upconv1 = nn.ConvTranspose2d(256, 128, kernel_size=2, stride=2)
         self.conv10 = nn.Conv2d(256, 128, 3, padding=1, bias=False)
-        self.norm10 = nn.LayerNorm(128)
+        self.norm10 = nn.GroupNorm(4,128)
         #gelu
         self.conv11 = nn.Conv2d(128, 128, 3, padding=1, bias=False)
-        self.norm11 = nn.LayerNorm(128)
+        self.norm11 = nn.GroupNorm(4,128)
         #gelu
         
         
         #UP BLOCK 2#
         self.upconv2 = nn.ConvTranspose2d(128, 64, kernel_size=2, stride=2)
         self.conv12 = nn.Conv2d(128, 64, 3, padding=1, bias=False)
-        self.norm12 = nn.LayerNorm(64)
+        self.norm12 = nn.GroupNorm(4,64)
         #gelu
         self.conv13 = nn.Conv2d(64, 64, 3, padding=1, bias=False)
-        self.norm13 = nn.LayerNorm(64)
+        self.norm13 = nn.GroupNorm(4,64)
         #gelu
         
         #UP BLOCK 3#
         self.upconv3 = nn.ConvTranspose2d(64, 32, kernel_size=2, stride=2)
         self.conv14 = nn.Conv2d(64,32,3,padding=1, bias=False)
-        self.norm14 = nn.LayerNorm(32)
+        self.norm14 = nn.GroupNorm(4,32)
         #gelu
         self.conv15 = nn.Conv2d(32, 32, 3, padding=1, bias=False)
-        self.norm15 = nn.LayerNorm(32)
+        self.norm15 = nn.GroupNorm(4,32)
         #gelu
         
         #1x1 Conv
@@ -128,40 +149,43 @@ class swinTWUNet(nn.Module):
         x = self.conv1(x)
         #x = F.gelu(x)
         x = F.gelu(self.norm1(x))
-        x = self.swint1(x)
-        #x = self.conv2(x)
-        #x = F.gelu(self.norm2(x))
-        #x = F.gelu(x)
-        x = self.conv3(x)
-        x = F.gelu(self.norm3(x))
         #x = self.swint1(x)
+        x = self.conv2(x)
+        x = F.gelu(self.norm2(x))
+        #x = F.gelu(x)
+        #x = self.conv3(x)
+        #x = F.gelu(self.norm3(x))
+        x = self.swint1(x)
         enc1 = self.swint1(x)
         x = self.swint2(x)
         
         #BLOCK 2
         x = self.conv4(x)
         x = F.gelu(self.norm4(x))
-        x = self.swint3(x)
+        #x = self.swint3(x)
         #x = F.gelu(x)
         #x = self.conv5(x)
         #x = F.gelu(self.norm5(x))
         #x = F.gelu(x)
         x = self.conv6(x)
         x = F.gelu(self.norm6(x))
-        enc2 = self.swint3(x)
         #x = self.swint3(x)
+        x = self.swint3(x)
+        #x = self.swint3(x)
+        x = self.swint3(x)
+        enc2 = self.swint3(x)
         x = self.swint4(x)
         
         #BLOCK 3
         x = self.conv7(x)
         x = F.gelu(self.norm7(x))
-        x = self.swint5(x)
         #x = F.gelu(x)
-        #x = self.conv8(x)
+        x = self.conv8(x)
         #x = F.gelu(x)
-       # x = F.gelu(self.norm8(x))
-        x = self.conv9(x)
-        x = F.gelu(self.norm9(x))
+        x = F.gelu(self.norm8(x))
+        #x = self.conv9(x)
+        #x = F.gelu(self.norm9(x))
+        #x = self.swint5(x)
         #x = self.swint5(x)
         x = self.swint5(x)
         x = self.swint5(x)
@@ -169,18 +193,24 @@ class swinTWUNet(nn.Module):
         x = self.swint6(x)
         #x = self.pool3(enc3)
 
-        #BOTTLENECK
-        x = self.convB1(x)
-        x = F.gelu(self.normB1(x))
+        #Block4
+        x = self.conv41(x)
+        x = F.gelu(self.norm41(x))
         #x = F.gelu(x)
-        x = self.convB2(x)
-        x = F.gelu(self.normB2(x))
-        #x = self.swintB1(x)
-        #x = self.swintB1(x)
+        x = self.conv42(x)
+        x = F.gelu(self.norm42(x))
+        #x = self.swint7(x)
+        x = self.swint8(x)
         #x = self.swintB2(x)
         #x = self.swintB2(x)
         
         #### DECODER ####
+        x = self.upconv4(x)
+        x = self.conv16(x)
+        x = F.gelu(self.norm16(x))
+        x = self.conv16(x)
+        x = F.gelu(self.norm16(x))
+
         
         #BLOCK 1
         x = self.upconv1(x)
@@ -189,6 +219,8 @@ class swinTWUNet(nn.Module):
         x = self.conv10(x)
         x = F.gelu(self.norm10(x))
         #x = F.gelu(x)
+        x = self.conv11(x)
+        x = F.gelu(self.norm11(x))
         x = self.conv11(x)
         x = F.gelu(self.norm11(x))
         #x = self.swint7(x)
@@ -203,6 +235,8 @@ class swinTWUNet(nn.Module):
         #x = F.gelu(x)
         x = self.conv13(x)
         x = F.gelu(self.norm13(x))
+        x = self.conv13(x)
+        x = F.gelu(self.norm13(x))
         #x = self.swint9(x)
         #x = self.swint10(x)
         
@@ -213,6 +247,8 @@ class swinTWUNet(nn.Module):
         x = self.conv14(x)
         x = F.gelu(self.norm14(x))
         #x = F.gelu(x)
+        #x = self.conv15(x)
+        #x = F.gelu(self.norm15(x))
         x = self.conv15(x)
         x = F.gelu(self.norm15(x))
         #x = self.swint11(x)

@@ -4,7 +4,7 @@
 @ Author: Rindon
 @ Date: 2024-04-28 15:00:03
 @ LastEditors: Rindon
-@ LastEditTime: 2024-04-28 15:04:53
+@ LastEditTime: 2024-05-01 09:14:41
 @ Description: 
 '''
 
@@ -27,7 +27,7 @@ class GroupBatchnorm2d(nn.Module):
 
     def forward(self, x):
         N, C, H, W = x.size()
-        x = x.view(N, self.group_num, -1)
+        x = x.reshape(N, self.group_num, -1)
         mean = x.mean(dim=2, keepdim=True)
         std = x.std(dim=2, keepdim=True)
         x = (x - mean) / (std + self.eps)
