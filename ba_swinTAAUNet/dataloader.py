@@ -4,7 +4,7 @@
 @ Author: Rindon
 @ Date: 2024-04-19 09:28:04
 @ LastEditors: Rindon
-@ LastEditTime: 2024-04-23 10:06:04
+@ LastEditTime: 2024-05-06 18:18:38
 @ Description: 
 '''
 from torch.utils.data import Dataset
@@ -70,3 +70,5 @@ class ISLES2018Dataset(Dataset):
 
 if __name__ == "__main__":
     ISLES2018Dataset(r'D:\dataset\ISLES_Dataset\ISLES2018_Training', modalities=['OT', 'CT', 'CT_CBV', 'CT_CBF', 'CT_Tmax' , 'CT_MTT'])
+    modalities = ['CT', 'CT_CBV', 'CT_CBF', 'CT_Tmax' , 'CT_MTT']
+    ISLES2018Dataset(r'D:\dataset\ISLES_Dataset\ISLES2018_Testing', modalities=modalities)
