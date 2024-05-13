@@ -28,8 +28,8 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 modalities = ['OT', 'CT', 'CT_CBV', 'CT_CBF', 'CT_Tmax' , 'CT_MTT']
 dataset_m = ISLES2018Dataset(r'D:\dataset\ISLES_Dataset\ISLES2018_Training', modalities=modalities)
-training_part = dataset_m
-testing_part = ISLES2018Dataset(r'D:\dataset\ISLES_Dataset\ISLES2018_Testing', modalities=modalities)
+#training_part = dataset_m
+training_part, testing_part = torch.utils.data.random_split(dataset_m, (480,22), generator=torch.Generator().manual_seed(42)) # random_split(数据集，长度)随机将一个数据集分割成给定长度的不重叠的新数据集
 
 
 # weight_init
@@ -42,12 +42,12 @@ def weight_init(m):
 
 # Configuration options
 #k_folds = 5
-k_folds = 5
+#k_folds = 5
 # For fold results
 results = {}
 
 # Define the K-fold Cross Validator
-kfold = KFold(n_splits=k_folds, shuffle=True)
+#kfold = KFold(n_splits=k_folds, shuffle=True)
 
 def train_model():
     max_acc = 0.0000
@@ -56,14 +56,14 @@ def train_model():
     print('-'*50)
 
     # K-fold Cross Validation model evaluation
-    for fold, (train_ids, validation_ids) in enumerate(kfold.split(training_part)):
+    for (train_ids, validation_ids) in enumerate(training_part):
 
         # 创建csv文件
         df = pd.DataFrame(columns=['Time', 'Step', 'Train loss', 'Validation loss', 'Validation dice'])# 列名
-        df.to_csv(f'ba_swinTAAUNet_300-fold-{fold}.csv',index=False)  
+        df.to_csv(f'ba_swinTAAUNet_300.csv',index=False)  
 
         # Print
-        print(f'FOLD {fold}')
+        print(f'FOLD1')
         print('-'*50)
 
         # Sample elements randomly from a given list of ids, no replacement
@@ -75,7 +75,7 @@ def train_model():
                                 batch_size=4,
                                 sampler=train_subsampler)
         
-        validationloader = DataLoader(training_part,
+        validationloader = DataLoader(testing_part,
                                       batch_size=4,
                                       sampler=validation_subsampler)
         print(len(trainloader))
@@ -144,7 +144,7 @@ def train_model():
             # print('Starting testing')
 
             # Saving the model
-            save_path = f'ba_swinTAAUNet_300-fold-{fold}.pth'
+            save_path = f'ba_swinTAAUNet_300.pth'
             torch.save(model.state_dict(), save_path)
 
             train_loss = training_loss/len(trainloader)
@@ -178,9 +178,9 @@ def train_model():
                 print('-'*30)
 
                 # Print accuracy
-                print('Accuracy for fold %d: %.3f %%' % (fold, 100.0 * (val_dice/len(validationloader))))
+                print('Accuracy: %.3f %%' % ( 100.0 * (val_dice/len(validationloader))))
                 print('-'*30)
-                results[fold] = 100.0 * (val_dice/len(validationloader))
+                results[0] = 100.0 * (val_dice/len(validationloader))
                 acc = 100.0 * (val_dice/len(validationloader))
                 #保存结果最好的那个
                 if max_acc < float('%.3f' % acc):
@@ -188,7 +188,7 @@ def train_model():
                     max_epoch = epoch
                     print("save!")
                     # 保存模型语句
-                    torch.save(model.state_dict(),f"ba_swinTAAUNet_best_{fold}.pth")
+                    torch.save(model.state_dict(),f"ba_swinTAAUNet_best.pth")
 
                 validation_loss = val_loss/len(validationloader)
                 Validation_loss = "%f"%validation_loss
@@ -201,14 +201,14 @@ def train_model():
             #将数据保存为一维列表
             list = [Time, Step, Train_loss, Validation_loss, Validation_dice]
             file = pd.DataFrame([list])
-            file.to_csv(f'ba_swinTAAUNet_300-fold-{fold}.csv', mode='a', header=False, index=False)
+            file.to_csv(f'ba_swinTAAUNet_300.csv', mode='a', header=False, index=False)
         #记录模型最好的信息
-        with open(f"best_{fold}.txt","w") as f:
-            f.write(f"fold is {fold},best epoch is {max_epoch}, best dice is {max_acc}") 
+        with open(f"best.txt","w") as f:
+            f.write(f"best epoch is {max_epoch}, best dice is {max_acc}") 
         max_acc = 0.0000
         max_epoch = 0
     # Print fold results
-    print(f'K-FOLD CROSS VALIDATION RESULTS FOR {k_folds} FOLDS')
+    print(f'K-FOLD CROSS VALIDATION RESULTS')
     print('-'*50)
     sum = 0.0
     for key, value in results.items():
