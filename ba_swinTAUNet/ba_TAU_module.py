@@ -4,7 +4,7 @@
 @ Author: Rindon
 @ Date: 2024-04-16 11:35:28
 @ LastEditors: Rindon
-@ LastEditTime: 2024-05-10 14:40:01
+@ LastEditTime: 2024-05-13 17:17:26
 @ Description: swinT and unet
 '''
 import torch
@@ -209,14 +209,13 @@ class TAU_module(nn.Module):
         #### DECODER ####
         
         #BLOCK 1
-        x = self.upconv1(x) #128*64*64
-        '''     
+        x = self.upconv1(x) #128*64*64    
         x1 = torch.cat((enc5, enc6), dim=1) #256*64*64
         x1 = self.conv10(x1) #128*64*64
         x1 = F.gelu(self.norm10(x1))
         x = torch.cat((x, x1), dim=1) #256*64*64
         x = self.conv10(x) #128*64*64
-        x = F.gelu(x)'''
+        x = F.gelu(x)
         x = self.conv12(x)
         x = F.gelu(self.norm12(x))
         x = self.conv12(x)
@@ -226,12 +225,14 @@ class TAU_module(nn.Module):
         
         #BLOCK 2
         x = self.upconv2(x) #64*128*128
-        x1 = torch.cat((enc3, enc4), dim=1) #128*128*128
+        '''x1 = torch.cat((enc3, enc4), dim=1) #128*128*128
         x1 = self.conv13(x1) #64*128*128
         x1 = F.gelu(self.norm13(x1))
         x = torch.cat((x, x1), dim=1) #128*128*128
         x = self.conv13(x) #64*128*128
-        x = F.gelu(x)
+        x = F.gelu(x)'''
+        x = self.conv15(x)
+        x = F.gelu(self.norm15(x))
         x = self.conv15(x)
         x = F.gelu(self.norm15(x))
         #64*128*128
