@@ -4,7 +4,7 @@
 @ Author: Rindon
 @ Date: 2024-04-16 11:35:28
 @ LastEditors: Rindon
-@ LastEditTime: 2024-05-13 17:17:26
+@ LastEditTime: 2024-05-15 10:01:48
 @ Description: swinT and unet
 '''
 import torch
@@ -79,10 +79,10 @@ class TAU_module(nn.Module):
         '''self.swint7 = swinT.SwinT(in_channels=128, input_resolution=(64,64), num_heads=4, 
                     window_size=4, qkv_bias=False, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=False)'''
-        self.swint8 = swinT.SwinT(in_channels=128, input_resolution=(64,64), num_heads=16, 
+        self.swint8 = swinT.SwinT(in_channels=128, input_resolution=(64,64), num_heads=8, 
                     window_size=8, qkv_bias=False, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=False)
-        self.swint9 = swinT.SwinT(in_channels=128, input_resolution=(64,64), num_heads=16, 
+        self.swint9 = swinT.SwinT(in_channels=128, input_resolution=(64,64), num_heads=8, 
                     window_size=8, qkv_bias=False, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=True)
         #128*32*32
@@ -216,8 +216,8 @@ class TAU_module(nn.Module):
         x = torch.cat((x, x1), dim=1) #256*64*64
         x = self.conv10(x) #128*64*64
         x = F.gelu(x)
-        x = self.conv12(x)
-        x = F.gelu(self.norm12(x))
+        #x = self.conv12(x)
+        #x = F.gelu(self.norm12(x))
         x = self.conv12(x)
         x = F.gelu(self.norm12(x))
         #128*64*64
@@ -225,14 +225,14 @@ class TAU_module(nn.Module):
         
         #BLOCK 2
         x = self.upconv2(x) #64*128*128
-        '''x1 = torch.cat((enc3, enc4), dim=1) #128*128*128
+        x1 = torch.cat((enc3, enc4), dim=1) #128*128*128
         x1 = self.conv13(x1) #64*128*128
         x1 = F.gelu(self.norm13(x1))
         x = torch.cat((x, x1), dim=1) #128*128*128
         x = self.conv13(x) #64*128*128
-        x = F.gelu(x)'''
-        x = self.conv15(x)
-        x = F.gelu(self.norm15(x))
+        x = F.gelu(x)
+        #x = self.conv15(x)
+        #x = F.gelu(self.norm15(x))
         x = self.conv15(x)
         x = F.gelu(self.norm15(x))
         #64*128*128
@@ -245,6 +245,8 @@ class TAU_module(nn.Module):
         x = torch.cat((x, x1), dim=1)#64*256*256
         x = self.conv16(x) #32*256*256
         x = F.gelu(x)
+        #x = self.conv18(x)
+        #x = F.gelu(self.norm18(x))
         x = self.conv18(x)
         x = F.gelu(self.norm18(x))
         #32*256*256
