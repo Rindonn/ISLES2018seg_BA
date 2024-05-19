@@ -4,7 +4,7 @@
 @ Author: Rindon
 @ Date: 2024-04-15 15:28:44
 @ LastEditors: Rindon
-@ LastEditTime: 2024-04-16 11:40:46
+@ LastEditTime: 2024-05-17 16:47:10
 @ Description: 组件化的swin-Transformer(可能有问题,需要check)
 可以作为再下一次的发表内容？
 '''
@@ -377,7 +377,6 @@ class SwinTransformerBlock(nn.Module):
         self.attn = WindowAttention(
             dim, window_size=(self.window_size, self.window_size), num_heads=num_heads, qkv_bias=qkv_bias,
             attn_drop=attn_drop, proj_drop=drop)
-
         self.drop_path = DropPath(drop_path) if drop_path > 0. else nn.Identity()
         self.norm2 = norm_layer(dim)
         mlp_hidden_dim = int(dim * mlp_ratio)
