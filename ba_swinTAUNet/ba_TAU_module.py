@@ -4,7 +4,7 @@
 @ Author: Rindon
 @ Date: 2024-04-16 11:35:28
 @ LastEditors: Rindon
-@ LastEditTime: 2024-05-13 17:17:26
+@ LastEditTime: 2024-05-23 17:58:07
 @ Description: swinT and unet
 '''
 import torch
@@ -55,10 +55,10 @@ class TAU_module(nn.Module):
         '''self.swint1 = swinT.SwinT(in_channels=32, input_resolution=(256,256), num_heads=4, 
                     window_size=4, qkv_bias=False, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=False)'''
-        self.swint2 = swinT.SwinT(in_channels=32, input_resolution=(256,256), num_heads=4, 
+        self.swint2 = swinT.SwinT(in_channels=32, input_resolution=(256,256), num_heads=8, 
                     window_size=8, qkv_bias=False, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=False)
-        self.swint3 = swinT.SwinT(in_channels=32, input_resolution=(256,256), num_heads=4, 
+        self.swint3 = swinT.SwinT(in_channels=32, input_resolution=(256,256), num_heads=8, 
                     window_size=8, qkv_bias=False, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=True)
         #64*128*128
@@ -218,33 +218,35 @@ class TAU_module(nn.Module):
         x = F.gelu(x)
         x = self.conv12(x)
         x = F.gelu(self.norm12(x))
-        x = self.conv12(x)
-        x = F.gelu(self.norm12(x))
+        #x = self.conv12(x)
+        #x = F.gelu(self.norm12(x))
         #128*64*64
         
         
         #BLOCK 2
         x = self.upconv2(x) #64*128*128
-        '''x1 = torch.cat((enc3, enc4), dim=1) #128*128*128
+        x1 = torch.cat((enc3, enc4), dim=1) #128*128*128
         x1 = self.conv13(x1) #64*128*128
         x1 = F.gelu(self.norm13(x1))
         x = torch.cat((x, x1), dim=1) #128*128*128
         x = self.conv13(x) #64*128*128
-        x = F.gelu(x)'''
-        x = self.conv15(x)
-        x = F.gelu(self.norm15(x))
+        x = F.gelu(x)
+        #x = self.conv15(x)
+        #x = F.gelu(self.norm15(x))
         x = self.conv15(x)
         x = F.gelu(self.norm15(x))
         #64*128*128
 
         #BLOCK 3 
         x = self.upconv3(x) #32*256*256
-        x1 = torch.cat((enc1, enc2), dim=1) #64*256*256
+        '''x1 = torch.cat((enc1, enc2), dim=1) #64*256*256
         x1 = self.conv16(x1) #32*256*256
         x = F.gelu(self.norm16(x))
         x = torch.cat((x, x1), dim=1)#64*256*256
         x = self.conv16(x) #32*256*256
-        x = F.gelu(x)
+        x = F.gelu(x)'''
+        x = self.conv18(x)
+        x = F.gelu(self.norm18(x))
         x = self.conv18(x)
         x = F.gelu(self.norm18(x))
         #32*256*256
