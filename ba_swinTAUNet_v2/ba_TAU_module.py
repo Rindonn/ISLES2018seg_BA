@@ -4,7 +4,7 @@
 @ Author: Rindon
 @ Date: 2024-04-16 11:35:28
 @ LastEditors: Rindon
-@ LastEditTime: 2024-05-17 12:19:48
+@ LastEditTime: 2024-05-27 09:39:59
 @ Description: swinT and unet
 '''
 import torch
@@ -52,21 +52,21 @@ class TAU_module(nn.Module):
         #self.norm7 = nn.BatchNorm2d(32)
         self.norm7 = nn.GroupNorm(4, 32)
         #32*256*256
-        '''self.swint1 = swinT.SwinT(in_channels=32, input_resolution=(256,256), num_heads=4, 
-                    window_size=4, qkv_bias=False, drop=0.1,
-                    attn_drop=0.1, drop_path=0.1,downsample=False)'''
+        self.swint1 = swinT.SwinT(in_channels=32, input_resolution=(256,256), num_heads=4, 
+                    window_size=8, qkv_bias=False, drop=0.1,
+                    attn_drop=0.1, drop_path=0.1,downsample=False)
         self.swint2 = swinT.SwinT(in_channels=32, input_resolution=(256,256), num_heads=4, 
                     window_size=8, qkv_bias=False, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=False)
-        self.swint3 = swinT.SwinT(in_channels=32, input_resolution=(256,256), num_heads=4, 
+        self.swint3 = swinT.SwinT(in_channels=32, input_resolution=(256,256), num_heads=8, 
                     window_size=8, qkv_bias=False, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=True)
         #64*128*128
 
         #DOWN BLOCK 2-2 #64*128*128      
-        '''self.swint4 = swinT.SwinT(in_channels=64, input_resolution=(128,128), num_heads=4, 
-                    window_size=4, qkv_bias=False, drop=0.1,
-                    attn_drop=0.1, drop_path=0.1,downsample=False)'''
+        self.swint4 = swinT.SwinT(in_channels=64, input_resolution=(128,128), num_heads=8, 
+                    window_size=8, qkv_bias=False, drop=0.1,
+                    attn_drop=0.1, drop_path=0.1,downsample=False)
         self.swint5 = swinT.SwinT(in_channels=64, input_resolution=(128,128), num_heads=8, 
                     window_size=8, qkv_bias=False, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=False)
@@ -76,9 +76,9 @@ class TAU_module(nn.Module):
         #128*64*64
 
         #DOWN BLOCK 3-2 #128*64*64
-        '''self.swint7 = swinT.SwinT(in_channels=128, input_resolution=(64,64), num_heads=4, 
-                    window_size=4, qkv_bias=False, drop=0.1,
-                    attn_drop=0.1, drop_path=0.1,downsample=False)'''
+        self.swint7 = swinT.SwinT(in_channels=128, input_resolution=(64,64), num_heads=8, 
+                    window_size=8, qkv_bias=False, drop=0.1,
+                    attn_drop=0.1, drop_path=0.1,downsample=False)
         self.swint8 = swinT.SwinT(in_channels=128, input_resolution=(64,64), num_heads=8, 
                     window_size=8, qkv_bias=False, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=False)
@@ -144,7 +144,10 @@ class TAU_module(nn.Module):
         x1 = x
         #BLOCK 1-1
         x = self.conv1(x)
+        x = F.gelu(x)
         #x = F.gelu(self.norm1(x))
+        x = self.conv2(x)
+        x = F.gelu(x)
         x = self.conv2(x)
         enc1 = F.gelu(self.norm2(x)) #32*256*256
         x = self.pool1(enc1) 
@@ -153,7 +156,10 @@ class TAU_module(nn.Module):
 
         #BLOCK 2-1
         x = self.conv3(x) 
+        x = F.gelu(x)
         #x = F.gelu(self.norm3(x))
+        x = self.conv4(x)
+        x = F.gelu(x)
         x = self.conv4(x)
         enc3 = F.gelu(self.norm4(x)) #64*128*128
         x = self.pool2(enc3)
@@ -162,7 +168,10 @@ class TAU_module(nn.Module):
                 
         #BLOCK 3-1
         x = self.conv5(x)
+        x = F.gelu(x)
         #x = F.gelu(self.norm5(x))
+        x = self.conv6(x)
+        x = F.gelu(x)
         x = self.conv6(x)
         enc5 = F.gelu(self.norm6(x)) #128*64*64
         x = self.pool3(enc5)
@@ -172,13 +181,13 @@ class TAU_module(nn.Module):
         #BLOCK 1-2
         x1 = self.conv7(x1) #32*256*256
         x1 = F.gelu(self.norm7(x1))
-        #x1 = self.swint1(x1)
+        x1 = self.swint1(x1)
         enc2 = self.swint2(x1) #32*256*256
         x1 = self.swint3(enc2) 
         #64*128*128
 
         #BLOCK 2-2
-        #x1 = self.swint4(x1)
+        x1 = self.swint4(x1)
         enc4 = self.swint5(x1) #64*128*128
         x1 = self.swint6(x1) 
         #128*64*64
@@ -187,8 +196,8 @@ class TAU_module(nn.Module):
         #x1 = self.swint7(x1)
         x1 = self.swint8(x1) #128*64*64
         x1 = self.swint8(x1)
-        '''x1 = self.swint8(x1)
-        x1 = self.swint8(x1)'''
+        #x1 = self.swint8(x1)
+        #x1 = self.swint8(x1)
         enc6 = self.swint8(x1) 
         x1 = self.swint9(enc6)
         x1 = self.conv8(x1) #256*32*32
@@ -197,7 +206,6 @@ class TAU_module(nn.Module):
 
         #BOTTLENECK
         x = torch.cat((x, x1), dim=1) #256*32*32
-        
         x = self.convB1(x)
         x = F.gelu(self.normB1(x))
         x = self.convB2(x)
@@ -217,6 +225,7 @@ class TAU_module(nn.Module):
         x = self.conv10(x) #128*64*64
         x = F.gelu(x)
         #x = self.conv12(x)
+        #x = F.gelu(x)
         #x = F.gelu(self.norm12(x))
         x = self.conv12(x)
         x = F.gelu(self.norm12(x))
@@ -231,7 +240,8 @@ class TAU_module(nn.Module):
         x = torch.cat((x, x1), dim=1) #128*128*128
         x = self.conv13(x) #64*128*128
         x = F.gelu(x)
-        #x = self.conv15(x)
+        x = self.conv15(x)
+        x = F.gelu(x)
         #x = F.gelu(self.norm15(x))
         x = self.conv15(x)
         x = F.gelu(self.norm15(x))
@@ -245,7 +255,8 @@ class TAU_module(nn.Module):
         x = torch.cat((x, x1), dim=1)#64*256*256
         x = self.conv16(x) #32*256*256
         x = F.gelu(x)
-        #x = self.conv18(x)
+        x = self.conv18(x)
+        x = F.gelu(x)
         #x = F.gelu(self.norm18(x))
         x = self.conv18(x)
         x = F.gelu(self.norm18(x))

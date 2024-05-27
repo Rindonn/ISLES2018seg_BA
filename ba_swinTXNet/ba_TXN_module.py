@@ -4,7 +4,7 @@
 @ Author: Rindon
 @ Date: 2024-04-16 11:35:28
 @ LastEditors: Rindon
-@ LastEditTime: 2024-05-24 09:54:37
+@ LastEditTime: 2024-05-24 10:48:31
 @ Description: swinT and unet
 '''
 import torch
@@ -58,39 +58,39 @@ class TXN_module(nn.Module):
 
         # DOWN BLOCK 1-2
         #32*256*256
-        self.swint1 = swinT.SwinT(in_channels=32, input_resolution=(256,256), num_heads=8, 
+        self.swint1 = swinT.SwinT(in_channels=32, input_resolution=(256,256), num_heads=4, 
                     window_size=8, qkv_bias=True, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=False)
-        self.swint2 = swinT.SwinT(in_channels=32, input_resolution=(256,256), num_heads=8, 
+        self.swint2 = swinT.SwinT(in_channels=32, input_resolution=(256,256), num_heads=4, 
                     window_size=8, qkv_bias=True, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=False)
-        self.swint3 = swinT.SwinT(in_channels=32, input_resolution=(256,256), num_heads=8, 
+        self.swint3 = swinT.SwinT(in_channels=32, input_resolution=(256,256), num_heads=4, 
                     window_size=8, qkv_bias=True, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=True)
         #128*128*128
 
         #DOWN BLOCK 2-2 
         #128*128*128      
-        self.swint4 = swinT.SwinT(in_channels=64, input_resolution=(128,128), num_heads=4, 
+        self.swint4 = swinT.SwinT(in_channels=64, input_resolution=(128,128), num_heads=8, 
                     window_size=8, qkv_bias=True, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=False)
-        self.swint5 = swinT.SwinT(in_channels=64, input_resolution=(128,128), num_heads=4, 
+        self.swint5 = swinT.SwinT(in_channels=64, input_resolution=(128,128), num_heads=8, 
                     window_size=8, qkv_bias=True, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=False)
-        self.swint6 = swinT.SwinT(in_channels=64, input_resolution=(128,128), num_heads=4, 
+        self.swint6 = swinT.SwinT(in_channels=64, input_resolution=(128,128), num_heads=8, 
                     window_size=8, qkv_bias=True, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=True)
         #256*64*64
 
         #DOWN BLOCK 3-2 
         #256*64*64
-        self.swint7 = swinT.SwinT(in_channels=128, input_resolution=(64,64), num_heads=4, 
+        self.swint7 = swinT.SwinT(in_channels=128, input_resolution=(64,64), num_heads=16, 
                     window_size=8, qkv_bias=True, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=False)
-        self.swint8 = swinT.SwinT(in_channels=128, input_resolution=(64,64), num_heads=4, 
+        self.swint8 = swinT.SwinT(in_channels=128, input_resolution=(64,64), num_heads=16, 
                     window_size=8, qkv_bias=True, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=False)
-        self.swint9 = swinT.SwinT(in_channels=128, input_resolution=(64,64), num_heads=4, 
+        self.swint9 = swinT.SwinT(in_channels=128, input_resolution=(64,64), num_heads=16, 
                     window_size=8, qkv_bias=True, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=True)
         #512*32*32
@@ -106,10 +106,10 @@ class TXN_module(nn.Module):
 
         self.convB1= ScConv(256)
         self.convB2 = ScConv(256)
-        self.swintB1 = swinT.SwinT(in_channels=256, input_resolution=(32,32), num_heads=8, 
+        self.swintB1 = swinT.SwinT(in_channels=256, input_resolution=(32,32), num_heads=16, 
                     window_size=8, qkv_bias=True, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=False)
-        self.swintB2 = swinT.SwinT(in_channels=256, input_resolution=(32,32), num_heads=8, 
+        self.swintB2 = swinT.SwinT(in_channels=256, input_resolution=(32,32), num_heads=16, 
                     window_size=8, qkv_bias=True, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=False)
         
@@ -152,9 +152,9 @@ class TXN_module(nn.Module):
 
         #BLOCK 1-1 #32*256*256
         x = self.conv1(x)
-        #x = F.gelu(self.norm2(x)) #32*256*256
+        x = F.gelu(self.norm2(x)) #32*256*256
         x = self.conv2(x)
-        #x = F.gelu(self.norm2(x)) #32*256*256
+        x = F.gelu(self.norm2(x)) #32*256*256
         x = self.conv2(x)
         x = F.gelu(self.norm2(x)) #32*256*256
         x = self.pool1(x) 
@@ -174,9 +174,9 @@ class TXN_module(nn.Module):
 
         #BLOCK 2-1 #64*128*128
         x = self.conv3(x) 
-        #x = F.gelu(self.norm4(x)) #64*128*128
+        x = F.gelu(self.norm4(x)) #64*128*128
         x = self.conv4(x)
-        #x = F.gelu(self.norm4(x)) #64*128*128
+        x = F.gelu(self.norm4(x)) #64*128*128
         x = self.conv4(x)
         x = F.gelu(self.norm4(x)) #64*128*128
         x = self.pool2(x)
@@ -196,9 +196,9 @@ class TXN_module(nn.Module):
 
         #BLOCK 3-1 #128*64*64
         x = self.conv5(x)
-        #x = F.gelu(self.norm6(x)) #128*64*64
+        x = F.gelu(self.norm6(x)) #128*64*64
         x = self.conv6(x)
-        #x = F.gelu(self.norm6(x)) #128*64*64
+        x = F.gelu(self.norm6(x)) #128*64*64
         x = self.conv6(x)
         x = F.gelu(self.norm6(x)) #128*64*64
         x = self.pool3(x)
@@ -207,7 +207,7 @@ class TXN_module(nn.Module):
         #BLOCK 3-2 #128*64*64
         x1 = self.swint7(x1)
         x1 = self.swint8(x1) #128*64*64
-        #x1 = self.swint8(x1)
+        x1 = self.swint8(x1)
         #x1 = self.swint8(x1)
         #x1 = self.swint8(x1)
         x1 = self.swint9(x1)
@@ -216,14 +216,14 @@ class TXN_module(nn.Module):
         #concat3
         x = torch.cat((x, x1), dim=1) #512*32*32
         x = self.convC3(x)#256*32*32
-        #x = F.gelu(self.norm9(x))
+        x = F.gelu(self.norm9(x))
         #BottleNeck
         x = self.convB1(x)
-        #x = F.gelu(self.norm9(x))
+        x = F.gelu(self.norm9(x))
         x = self.convB2(x)
         x = F.gelu(self.norm9(x))
-        #x = self.swintB1(x)
-        #x = self.swintB2(x)
+        x = self.swintB1(x)
+        x = self.swintB2(x)
         #256*32*32
 
         #### DECODER ####
@@ -232,13 +232,13 @@ class TXN_module(nn.Module):
         x = self.upconv1(x) #128*64*64
         x = torch.cat((x,enc3),dim=1)#256*64*64
         x = self.conv10(x) #128*64*64
-        #x = F.gelu(self.norm12(x))
-        x = self.conv12(x)
-        #x = F.gelu(self.norm12(x))
+        x = F.gelu(self.norm12(x))
         x = self.conv12(x)
         x = F.gelu(self.norm12(x))
-        x = self.swint8(x)
-        x = self.swint8(x)
+        x = self.conv12(x)
+        x = F.gelu(self.norm12(x))
+        #x = self.swint8(x)
+        #x = self.swint8(x)
         #128*64*64
         
         
@@ -246,31 +246,31 @@ class TXN_module(nn.Module):
         x = self.upconv2(x) #64*128*128
         x = torch.cat((x, enc2), dim=1) #128*128*128
         x = self.conv13(x) #64*128*128
-        #x = F.gelu(self.norm15(x))
-        x = self.conv15(x)
-        #x = F.gelu(self.norm15(x))
+        x = F.gelu(self.norm15(x))
         x = self.conv15(x)
         x = F.gelu(self.norm15(x))
-        x = self.swint4(x)
-        x = self.swint4(x)
+        x = self.conv15(x)
+        x = F.gelu(self.norm15(x))
+        #x = self.swint4(x)
+        #x = self.swint4(x)
         #64*128*128
 
         #BLOCK 3 
         x = self.upconv3(x) #32*256*256
         x = torch.cat((x, enc1), dim=1) #64*256*256
         x = self.conv16(x) #32*256*256
-        #x = F.gelu(self.norm18(x))
+        x = F.gelu(self.norm18(x))
         x = self.conv18(x) 
-        #x = F.gelu(self.norm18(x))
+        x = F.gelu(self.norm18(x))
         x = self.conv18(x)
         x = F.gelu(self.norm18(x))
-        x = self.swint1(x)
-        x = self.swint1(x)
+        #x = self.swint1(x)
+        #x = self.swint1(x)
         #32*256*256
         
         x = self.convEND(x)
         return torch.sigmoid(x)   
-    
+        #return torch.softmax(x,dim=1)
 
 
 if __name__ == "__main__":

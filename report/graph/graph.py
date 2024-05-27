@@ -4,7 +4,7 @@
 @ Author: Rindon
 @ Date: 2024-04-29 14:19:32
 @ LastEditors: Rindon
-@ LastEditTime: 2024-05-07 11:14:54
+@ LastEditTime: 2024-05-24 14:54:32
 @ Description: draw graph
 '''
 import pandas as pd
@@ -21,20 +21,21 @@ plt.figure(figsize=(14, 10))
 for file in files:
     filepath = os.path.join(directory, file)
     data = pd.read_csv(filepath)
-    #Dice = data.iloc[:, 4]
+    Accuracy = data.iloc[:, 4]
     Loss = data.iloc[:, 2]
     Epoch = range(1, 301)
-    plt.plot(Epoch, Loss, label=file[:-4])  # 去掉文件名的'.csv'后缀
+    #plt.plot(Epoch, Loss, label=file[:-4])  # 去掉文件名的'.csv'后缀
+    plt.plot(Epoch, Accuracy, label=file[:-4])  # 去掉文件名的'.csv'后缀
 
 plt.legend()
-#plt.title('Validation Dice',fontsize = 20)
-plt.title('Training Loss',fontsize = 20)
+#plt.title('Dice',fontsize = 20)
+#plt.title('Training Loss',fontsize = 20)
 plt.xlabel('Epoch',fontsize = 15)
-plt.ylabel('Loss',fontsize = 15)
-#plt.ylabel('Dice',fontsize = 15)
+#plt.ylabel('Loss',fontsize = 15)
+plt.ylabel('Accuracy',fontsize = 15)
 plt.xlim((0,300))
-#plt.ylim((0,0.73))
-plt.ylim((0.24,1))
+plt.ylim((0,0.75))
+#plt.ylim((0.2,1))
 plt.gca().yaxis.set_major_locator(ticker.MultipleLocator(0.02)) 
 plt.grid()
 plt.show()
