@@ -4,7 +4,7 @@
 @ Author: Rindon
 @ Date: 2024-04-16 11:35:28
 @ LastEditors: Rindon
-@ LastEditTime: 2024-05-23 17:58:07
+@ LastEditTime: 2024-06-02 07:21:25
 @ Description: swinT and unet
 '''
 import torch
@@ -216,10 +216,10 @@ class TAU_module(nn.Module):
         x = torch.cat((x, x1), dim=1) #256*64*64
         x = self.conv10(x) #128*64*64
         x = F.gelu(x)
-        x = self.conv12(x)
-        x = F.gelu(self.norm12(x))
         #x = self.conv12(x)
         #x = F.gelu(self.norm12(x))
+        x = self.conv12(x)
+        x = F.gelu(self.norm12(x))
         #128*64*64
         
         
@@ -239,14 +239,14 @@ class TAU_module(nn.Module):
 
         #BLOCK 3 
         x = self.upconv3(x) #32*256*256
-        '''x1 = torch.cat((enc1, enc2), dim=1) #64*256*256
+        x1 = torch.cat((enc1, enc2), dim=1) #64*256*256
         x1 = self.conv16(x1) #32*256*256
         x = F.gelu(self.norm16(x))
         x = torch.cat((x, x1), dim=1)#64*256*256
         x = self.conv16(x) #32*256*256
-        x = F.gelu(x)'''
-        x = self.conv18(x)
-        x = F.gelu(self.norm18(x))
+        x = F.gelu(x)
+        #x = self.conv18(x)
+        #x = F.gelu(self.norm18(x))
         x = self.conv18(x)
         x = F.gelu(self.norm18(x))
         #32*256*256
