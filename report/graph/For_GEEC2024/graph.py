@@ -22,6 +22,7 @@ plt.figure(figsize=(14, 10))
 for file in files:
     filepath = os.path.join(directory, file)
     data = pd.read_csv(filepath)
+    #data.replace(0, pd.NA, inplace=True)
     Accuracy = data.iloc[:, 4]
     Loss = data.iloc[:, 2]
     Epoch = range(1, 451)
