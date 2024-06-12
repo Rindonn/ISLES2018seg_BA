@@ -4,7 +4,7 @@
 @ Author: Rindon
 @ Date: 2024-04-16 11:35:28
 @ LastEditors: Rindon
-@ LastEditTime: 2024-04-19 17:06:29
+@ LastEditTime: 2024-06-07 19:30:25
 @ Description: swinT and unet
 '''
 import torch
@@ -77,10 +77,10 @@ class swinTAUNet(nn.Module):
         '''self.swint7 = swinT.SwinT(in_channels=128, input_resolution=(64,64), num_heads=4, 
                     window_size=4, qkv_bias=False, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=False)'''
-        self.swint8 = swinT.SwinT(in_channels=128, input_resolution=(64,64), num_heads=16, 
+        self.swint8 = swinT.SwinT(in_channels=128, input_resolution=(64,64), num_heads=8, 
                     window_size=8, qkv_bias=False, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=False)
-        self.swint9 = swinT.SwinT(in_channels=128, input_resolution=(64,64), num_heads=16, 
+        self.swint9 = swinT.SwinT(in_channels=128, input_resolution=(64,64), num_heads=8, 
                     window_size=8, qkv_bias=False, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=True)
         #128*32*32

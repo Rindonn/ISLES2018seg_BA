@@ -4,7 +4,7 @@
 @ Author: Rindon
 @ Date: 2024-04-16 11:35:28
 @ LastEditors: Rindon
-@ LastEditTime: 2024-06-02 07:21:25
+@ LastEditTime: 2024-06-10 07:48:56
 @ Description: swinT and unet
 '''
 import torch
@@ -144,7 +144,7 @@ class TAU_module(nn.Module):
         x1 = x
         #BLOCK 1-1
         x = self.conv1(x)
-        #x = F.gelu(self.norm1(x))
+        x = F.gelu(self.norm1(x))
         x = self.conv2(x)
         enc1 = F.gelu(self.norm2(x)) #32*256*256
         x = self.pool1(enc1) 
@@ -153,7 +153,7 @@ class TAU_module(nn.Module):
 
         #BLOCK 2-1
         x = self.conv3(x) 
-        #x = F.gelu(self.norm3(x))
+        x = F.gelu(self.norm3(x))
         x = self.conv4(x)
         enc3 = F.gelu(self.norm4(x)) #64*128*128
         x = self.pool2(enc3)
@@ -162,7 +162,7 @@ class TAU_module(nn.Module):
                 
         #BLOCK 3-1
         x = self.conv5(x)
-        #x = F.gelu(self.norm5(x))
+        x = F.gelu(self.norm5(x))
         x = self.conv6(x)
         enc5 = F.gelu(self.norm6(x)) #128*64*64
         x = self.pool3(enc5)
@@ -215,9 +215,9 @@ class TAU_module(nn.Module):
         x1 = F.gelu(self.norm10(x1))
         x = torch.cat((x, x1), dim=1) #256*64*64
         x = self.conv10(x) #128*64*64
-        x = F.gelu(x)
+        #x = F.gelu(x)
         #x = self.conv12(x)
-        #x = F.gelu(self.norm12(x))
+        x = F.gelu(self.norm12(x))
         x = self.conv12(x)
         x = F.gelu(self.norm12(x))
         #128*64*64
@@ -230,9 +230,9 @@ class TAU_module(nn.Module):
         x1 = F.gelu(self.norm13(x1))
         x = torch.cat((x, x1), dim=1) #128*128*128
         x = self.conv13(x) #64*128*128
-        x = F.gelu(x)
+        #x = F.gelu(x)
         #x = self.conv15(x)
-        #x = F.gelu(self.norm15(x))
+        x = F.gelu(self.norm15(x))
         x = self.conv15(x)
         x = F.gelu(self.norm15(x))
         #64*128*128
@@ -244,9 +244,9 @@ class TAU_module(nn.Module):
         x = F.gelu(self.norm16(x))
         x = torch.cat((x, x1), dim=1)#64*256*256
         x = self.conv16(x) #32*256*256
-        x = F.gelu(x)
+        #x = F.gelu(x)
         #x = self.conv18(x)
-        #x = F.gelu(self.norm18(x))
+        x = F.gelu(self.norm18(x))
         x = self.conv18(x)
         x = F.gelu(self.norm18(x))
         #32*256*256

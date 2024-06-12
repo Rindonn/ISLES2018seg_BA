@@ -60,7 +60,7 @@ def train_model():
 
         # 创建csv文件
         df = pd.DataFrame(columns=['Time', 'Step', 'Train loss', 'Validation loss', 'Validation dice'])# 列名
-        df.to_csv(f'ba_modTAU_skip4_300-fold-{fold}.csv',index=False)  
+        df.to_csv(f'ba_modTAU_300-fold-{fold}.csv',index=False)  
 
         # Print
         print(f'FOLD {fold}')
@@ -144,7 +144,7 @@ def train_model():
             # print('Starting testing')
 
             # Saving the model
-            save_path = f'ba_modTAU_skip4_300-fold-{fold}.pth'
+            save_path = f'ba_modTAU_300-fold-{fold}.pth'
             torch.save(model.state_dict(), save_path)
 
             train_loss = training_loss/len(trainloader)
@@ -188,7 +188,7 @@ def train_model():
                     max_epoch = epoch
                     print("save!")
                     # 保存模型语句
-                    torch.save(model.state_dict(),f"ba_modTAU_skip4_best_{fold}.pth")
+                    torch.save(model.state_dict(),f"ba_modTAU_best_{fold}.pth")
 
                 validation_loss = val_loss/len(validationloader)
                 Validation_loss = "%f"%validation_loss
@@ -201,7 +201,7 @@ def train_model():
             #将数据保存为一维列表
             list = [Time, Step, Train_loss, Validation_loss, Validation_dice]
             file = pd.DataFrame([list])
-            file.to_csv(f'ba_modTAU_skip4_300-fold-{fold}.csv', mode='a', header=False, index=False)
+            file.to_csv(f'ba_modTAU_300-fold-{fold}.csv', mode='a', header=False, index=False)
         #记录模型最好的信息
         with open(f"best_{fold}.txt","w") as f:
             f.write(f"fold is {fold},best epoch is {max_epoch}, best dice is {max_acc}") 
