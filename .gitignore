@@ -14,3 +14,13 @@ ba_swinTWUNet_best_1.pth
 ba_swinTWUNet_best_2.pth
 ba_swinTWUNet_best_3.pth
 ba_swinTWUNet_best_4.pth
+record/swinTAUNet/6.14_KAN_70%/ba_modTAU_kan_300-fold-1.pth
+record/swinTAUNet/6.14_KAN_70%/ba_modTAU_kan_300-fold-0.pth
+record/swinTAUNet/6.14_KAN_70%/ba_modTAU_kan_300-fold-2.pth
+record/swinTAUNet/6.14_KAN_70%/ba_modTAU_kan_300-fold-3.pth
+record/swinTAUNet/6.14_KAN_70%/ba_modTAU_kan_300-fold-4.pth
+record/swinTAUNet/6.14_KAN_70%/ba_modTAU_kan_best_0.pth
+record/swinTAUNet/6.14_KAN_70%/ba_modTAU_kan_best_1.pth
+record/swinTAUNet/6.14_KAN_70%/ba_modTAU_kan_best_2.pth
+record/swinTAUNet/6.14_KAN_70%/ba_modTAU_kan_best_3.pth
+record/swinTAUNet/6.14_KAN_70%/ba_modTAU_kan_best_4.pth
