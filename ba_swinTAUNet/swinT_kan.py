@@ -4,7 +4,7 @@
 @ Author: Rindon
 @ Date: 2024-04-15 15:28:44
 @ LastEditors: Rindon
-@ LastEditTime: 2024-05-23 17:40:40
+@ LastEditTime: 2024-06-12 09:52:07
 @ Description: 组件化的swin-Transformer(可能有问题,需要check)
 可以作为再下一次的发表内容？
 '''
@@ -568,9 +568,9 @@ class SwinT(nn.Module):
         return x
 
 if __name__ == '__main__':
-    tmp = torch.tensor(np.random.rand(16, 128, 64, 64), dtype=torch.float32).to('cuda:0')
+    tmp = torch.tensor(np.random.rand(16, 128, 32, 32), dtype=torch.float32).to('cuda:0')
     print(tmp.shape)
-    sts = SwinT(in_channels=128, input_resolution=(64,64), num_heads=8, window_size=4, qkv_bias=False, drop=0.1,
+    sts = SwinT(in_channels=128, input_resolution=(32,32), num_heads=8, window_size=4, qkv_bias=False, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=False).to('cuda:0')
     out = sts(sts(sts(sts(tmp))))
     print(out.shape)

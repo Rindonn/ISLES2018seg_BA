@@ -22,8 +22,9 @@ from m_deeplab import DeepLabV3
 from m_DeepTransUnet import DeepTransUnet
 '''
 from ba_swinTAUNet import swinTAUNet
-from ba_TAU_module import TAU_module
+#from ba_TAU_module import TAU_module
 #from ba_TAU_module_dyupsample import TAU_module
+from ba_TAU_module_kan import TAU_module
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -60,7 +61,7 @@ def train_model():
 
         # 创建csv文件
         df = pd.DataFrame(columns=['Time', 'Step', 'Train loss', 'Validation loss', 'Validation dice'])# 列名
-        df.to_csv(f'ba_modTAU_300-fold-{fold}.csv',index=False)  
+        df.to_csv(f'ba_modTAU_kan_300-fold-{fold}.csv',index=False)  
 
         # Print
         print(f'FOLD {fold}')
@@ -72,7 +73,7 @@ def train_model():
 
         # Define data loaders for training and testing data in this fold
         trainloader = DataLoader(training_part,
-                                batch_size=6,
+                                batch_size=4,
                                 sampler=train_subsampler)
         
         validationloader = DataLoader(training_part,
@@ -94,7 +95,7 @@ def train_model():
         focal_loss = FocalLoss()
         focaltversky_loss = FocalTverskyLoss()
         #optimizer = Lion(model.parameters(), lr=5e-4)
-        optimizer = AdamW(model.parameters(), lr=0.0000523, weight_decay=0.05)#0.0000123
+        optimizer = AdamW(model.parameters(), lr=0.0000123, weight_decay=0.05)#0.0000523
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer,'min',factor=0.9,patience=3) # 3, 0.6
 
         for epoch in range(300):
@@ -144,7 +145,7 @@ def train_model():
             # print('Starting testing')
 
             # Saving the model
-            save_path = f'ba_modTAU_300-fold-{fold}.pth'
+            save_path = f'ba_modTAU_kan_300-fold-{fold}.pth'
             torch.save(model.state_dict(), save_path)
 
             train_loss = training_loss/len(trainloader)
@@ -188,7 +189,7 @@ def train_model():
                     max_epoch = epoch
                     print("save!")
                     # 保存模型语句
-                    torch.save(model.state_dict(),f"ba_modTAU_best_{fold}.pth")
+                    torch.save(model.state_dict(),f"ba_modTAU_kan_best_{fold}.pth")
 
                 validation_loss = val_loss/len(validationloader)
                 Validation_loss = "%f"%validation_loss
@@ -201,7 +202,7 @@ def train_model():
             #将数据保存为一维列表
             list = [Time, Step, Train_loss, Validation_loss, Validation_dice]
             file = pd.DataFrame([list])
-            file.to_csv(f'ba_modTAU_300-fold-{fold}.csv', mode='a', header=False, index=False)
+            file.to_csv(f'ba_modTAU_kan_300-fold-{fold}.csv', mode='a', header=False, index=False)
         #记录模型最好的信息
         with open(f"best_{fold}.txt","w") as f:
             f.write(f"fold is {fold},best epoch is {max_epoch}, best dice is {max_acc}") 
