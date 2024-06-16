@@ -21,7 +21,6 @@ from m_deeplab import DeepLabV3
 #from m_unet import Unet
 from m_DeepTransUnet import DeepTransUnet
 '''
-from ba_swinTAAUNet import swinTAAUNet
 from ba_TAAU_module import TAAU_module
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")

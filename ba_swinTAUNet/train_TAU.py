@@ -22,9 +22,9 @@ from m_deeplab import DeepLabV3
 from m_DeepTransUnet import DeepTransUnet
 '''
 from ba_swinTAUNet import swinTAUNet
-#from ba_TAU_module import TAU_module
+from ba_TAU_module import TAU_module
 #from ba_TAU_module_dyupsample import TAU_module
-from ba_TAU_module_kan import TAU_module
+#from ba_TAU_module_kan import TAU_module
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -95,8 +95,8 @@ def train_model():
         focal_loss = FocalLoss()
         focaltversky_loss = FocalTverskyLoss()
         #optimizer = Lion(model.parameters(), lr=5e-4)
-        optimizer = AdamW(model.parameters(), lr=0.0000123, weight_decay=0.05)#0.0000523
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer,'min',factor=0.9,patience=3) # 3, 0.6
+        optimizer = AdamW(model.parameters(), lr=0.0000523, weight_decay=0.05)#0.0000523
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer,'min',factor=0.8,patience=3) # 3, 0.6
 
         for epoch in range(300):
 
