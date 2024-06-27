@@ -57,7 +57,7 @@ def train_model():
     print('-'*50)
 
     # K-fold Cross Validation model evaluation
-    for fold, (train_ids, validation_ids) in enumerate(kfold.split(training_part)):
+    for fold, (train_ids, validation_ids) in enumerate(kfold.split(dataset_m)):
 
         # 创建csv文件
         df = pd.DataFrame(columns=['Time', 'Step', 'Train loss', 'Validation loss', 'Validation dice'])# 列名
@@ -72,11 +72,11 @@ def train_model():
         validation_subsampler = torch.utils.data.SubsetRandomSampler(validation_ids)
 
         # Define data loaders for training and testing data in this fold
-        trainloader = DataLoader(training_part,
+        trainloader = DataLoader(dataset_m,
                                 batch_size=6,
                                 sampler=train_subsampler)
         
-        validationloader = DataLoader(training_part,
+        validationloader = DataLoader(dataset_m,
                                       batch_size=4,
                                       sampler=validation_subsampler)
         print(len(trainloader))

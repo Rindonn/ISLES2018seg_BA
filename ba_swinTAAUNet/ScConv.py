@@ -27,7 +27,7 @@ class GroupBatchnorm2d(nn.Module):
 
     def forward(self, x):
         N, C, H, W = x.size()
-        x = x.reshape(N, self.group_num, -1)
+        x = x.view(N, self.group_num, -1)
         mean = x.mean(dim=2, keepdim=True)
         std = x.std(dim=2, keepdim=True)
         x = (x - mean) / (std + self.eps)
