@@ -2,7 +2,7 @@ import pandas as pd
 import torch
 import torch.nn as nn
 import torch.utils.data
-
+import random
 
 from torchvision import transforms
 from datetime import datetime
@@ -13,7 +13,6 @@ from dataloader import ISLES2018Dataset
 from sklearn.model_selection import KFold
 
 from lion_pytorch import Lion
-from torch.optim import AdamW
 '''
 from m_transunet import TransUnet
 from m_fcn import FCN8s
@@ -23,12 +22,14 @@ from m_DeepTransUnet import DeepTransUnet
 '''
 #from ba_swinTAUNet import swinTAUNet
 from ba_TAU_module import TAU_module
-
+seed = random.randint(1,100)
+print(f"seed id {seed}")
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 modalities = ['OT', 'CT', 'CT_CBV', 'CT_CBF', 'CT_Tmax' , 'CT_MTT']
 dataset_m = ISLES2018Dataset(r'D:\dataset\ISLES_Dataset\ISLES2018_Training', modalities=modalities)
-training_part, testing_part = torch.utils.data.random_split(dataset_m, (480,22), generator=torch.Generator().manual_seed(42)) # random_split(数据集，长度)随机将一个数据集分割成给定长度的不重叠的新数据集
+#training_part, testing_part = torch.utils.data.random_split(dataset_m, (480,22), generator=torch.Generator().manual_seed(seed)) # random_split(数据集，长度)随机将一个数据集分割成给定长度的不重叠的新数据集
+training_part, testing_part = torch.utils.data.random_split(dataset_m, (480,22), generator=torch.Generator().manual_seed(seed)) # random_split(数据集，长度)随机将一个数据集分割成给定长度的不重叠的新数据集
 
 
 # weight_init
@@ -92,9 +93,13 @@ def train_model():
         bce_loss = nn.BCELoss()
         focal_loss = FocalLoss()
         focaltversky_loss = FocalTverskyLoss()
-        #optimizer = Lion(model.parameters(), lr=5e-4)
-        optimizer = AdamW(model.parameters(), lr=0.0000523, weight_decay=0.05)#0000523
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer,'min',factor=0.9,patience=5) # 3, 0.6
+        #optimizer = Lion(model.parameters(), lr=0.0000523)
+        #optimizer = torch.optim.AdamW(model.parameters(), lr=0.0000623, weight_decay=0.05)#0000523
+        #optimizer = torch.optim.NAdam(model.parameters(), lr=0.0000623, weight_decay=0.05)#0000523
+        optimizer = torch.optim.RAdam(model.parameters(), lr=0.000623, weight_decay=0.05)#0000523
+        #optimizer = torch.optim.Adam(model.parameters(), lr=0.0000623, weight_decay=0.05)#0000523
+        #optimizer = torch.optim.Adamax(model.parameters(), lr=0.0000623, weight_decay=0.05)#0000523
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer,'min',factor=0.8,patience=10) # 3, 0.6
 
         for epoch in range(300):
 
@@ -140,7 +145,7 @@ def train_model():
             print('Training process has finished!')
 
             # Print validation
-            # print('Starting testing')
+            print('Starting validation')
 
             # Saving the model
             save_path = f'ba_swinTAUNet_300-fold-{fold}.pth'
@@ -203,7 +208,7 @@ def train_model():
             file.to_csv(f'ba_swinTAUNet_300-fold-{fold}.csv', mode='a', header=False, index=False)
         #记录模型最好的信息
         with open(f"best_{fold}.txt","w") as f:
-            f.write(f"fold is {fold},best epoch is {max_epoch}, best dice is {max_acc}") 
+            f.write(f"fold is {fold},best epoch is {max_epoch}, best dice is {max_acc},seed is {seed}") 
         max_acc = 0.0000
         max_epoch = 0
     # Print fold results

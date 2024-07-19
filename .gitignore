@@ -43,3 +43,4 @@ record/swinTAUNet/6.16_KAN_65%/ba_modTAU_kan_best_0.pth
 record/swinTAUNet/6.16_KAN_65%/ba_modTAU_kan_best_1.pth
 record/swinTAUNet/6.16_KAN_65%/ba_modTAU_kan_best_2.pth
 record/swinTAUNet/6.16_KAN_65%/ba_modTAU_kan_best_3.pth
+*.pth
