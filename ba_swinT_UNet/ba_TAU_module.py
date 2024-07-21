@@ -4,7 +4,7 @@
 @ Author: Rindon
 @ Date: 2024-04-16 11:35:28
 @ LastEditors: Rindon
-@ LastEditTime: 2024-07-19 09:51:17
+@ LastEditTime: 2024-07-21 11:26:17
 @ Description: swinT and unet
 '''
 import torch
@@ -53,13 +53,13 @@ class TAU_module(nn.Module):
         self.norm7 = nn.GroupNorm(4, 32)
         #32*256*256
         self.swint1 = swinT.SwinT(in_channels=32, input_resolution=(256,256), num_heads=4, 
-                    window_size=8, qkv_bias=False, drop=0.1,
+                    window_size=4, qkv_bias=False, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=False)
         self.swint2 = swinT.SwinT(in_channels=32, input_resolution=(256,256), num_heads=4, 
                     window_size=8, qkv_bias=False, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=False)
         self.swint3 = swinT.SwinT(in_channels=32, input_resolution=(256,256), num_heads=4, 
-                    window_size=8, qkv_bias=False, drop=0.1,
+                    window_size=16, qkv_bias=False, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=True)
         #64*128*128
 
@@ -83,6 +83,9 @@ class TAU_module(nn.Module):
                     window_size=8, qkv_bias=False, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=False)
         self.swint9 = swinT.SwinT(in_channels=128, input_resolution=(64,64), num_heads=4, 
+                    window_size=16, qkv_bias=False, drop=0.1,
+                    attn_drop=0.1, drop_path=0.1,downsample=False)
+        self.swint10 = swinT.SwinT(in_channels=128, input_resolution=(64,64), num_heads=4, 
                     window_size=16, qkv_bias=False, drop=0.1,
                     attn_drop=0.1, drop_path=0.1,downsample=True)
         #128*32*32
@@ -144,6 +147,7 @@ class TAU_module(nn.Module):
     def forward(self, x):
         #### ENCODER ####
         #5*256*256
+        enc0 = x
         x1 = x
         #BLOCK 1-1
         x = self.conv1(x)
@@ -198,11 +202,13 @@ class TAU_module(nn.Module):
         #BLOCK 3-2
         x1 = self.swint7(x1)
         x1 = self.swint8(x1) #128*64*64
-        #x1 = self.swint8(x1)
-        #x1 = self.swint8(x1)
-        #x1 = self.swint8(x1)
-        enc6 = self.swint8(x1) 
-        x1 = self.swint9(enc6)
+        x1 = self.swint9(x1)
+        x1 = self.swint7(x1)
+        x1 = self.swint8(x1)
+        x1 = self.swint9(x1)
+        x1 = self.swint7(x1)
+        enc6 = self.swint8(x1)
+        x1 = self.swint10(enc6)
         x1 = self.conv8(x1) #256*32*32
         x1 = F.gelu(self.norm8(x1))
         #128*32*32
@@ -217,20 +223,16 @@ class TAU_module(nn.Module):
         x = self.swintB1(x)
         x = self.swintB2(x)
         x = self.swintB3(x)
-        '''
-        x = self.swintB1(x)
-        x = self.swintB2(x)
-        x = self.swintB1(x)
-        x = self.swintB2(x)'''
         #256*32*32
 
         #### DECODER ####
         
         #BLOCK 1
         x = self.upconv1(x) #128*64*64
-        x1 = torch.cat((enc5, enc6), dim=1) #256*64*64
-        x1 = self.conv10(x1) #128*64*64
-        x1 = F.gelu(self.norm10(x1))
+        #x1 = torch.cat((enc5, enc6), dim=1) #256*64*64
+        #x1 = self.conv10(x1) #128*64*64
+        #x1 = F.gelu(self.norm10(x1))
+        x1 = enc5 + enc6
         x = torch.cat((x, x1), dim=1) #256*64*64
         x = self.conv10(x) #128*64*64
         x = F.gelu(x)
@@ -243,9 +245,10 @@ class TAU_module(nn.Module):
         
         #BLOCK 2
         x = self.upconv2(x) #64*128*128
-        x1 = torch.cat((enc3, enc4), dim=1) #128*128*128
-        x1 = self.conv13(x1) #64*128*128
-        x1 = F.gelu(self.norm13(x1))
+        #x1 = torch.cat((enc3, enc4), dim=1) #128*128*128
+        #x1 = self.conv13(x1) #64*128*128
+        #x1 = F.gelu(self.norm13(x1))
+        x1 = enc3 + enc4
         x = torch.cat((x, x1), dim=1) #128*128*128
         x = self.conv13(x) #64*128*128
         x = F.gelu(x)
@@ -255,9 +258,10 @@ class TAU_module(nn.Module):
 
         #BLOCK 3 
         x = self.upconv3(x) #32*256*256
-        x1 = torch.cat((enc1, enc2), dim=1) #64*256*256
-        x1 = self.conv16(x1) #32*256*256
-        x = F.gelu(self.norm16(x))
+        #x1 = torch.cat((enc1, enc2), dim=1) #64*256*256
+        #x1 = self.conv16(x1) #32*256*256
+        #x1 = F.gelu(self.norm16(x1))
+        x1 = enc1 + enc2
         x = torch.cat((x, x1), dim=1)#64*256*256
         x = self.conv16(x) #32*256*256
         x = F.gelu(x)

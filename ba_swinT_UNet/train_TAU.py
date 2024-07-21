@@ -59,7 +59,7 @@ def train_model():
     for fold, (train_ids, validation_ids) in enumerate(kfold.split(training_part)):
 
         # 创建csv文件
-        df = pd.DataFrame(columns=['Time', 'Step', 'Train loss', 'Validation loss', 'Validation dice'])# 列名
+        df = pd.DataFrame(columns=['Time', 'Step', 'Train loss', 'Validation loss', 'Validation dice','Learning Rate'])# 列名
         df.to_csv(f'ba_swinTAUNet_300-fold-{fold}.csv',index=False)  
 
         # Print
@@ -72,7 +72,7 @@ def train_model():
 
         # Define data loaders for training and testing data in this fold
         trainloader = DataLoader(training_part,
-                                batch_size=6,
+                                batch_size=4,
                                 sampler=train_subsampler)
         
         validationloader = DataLoader(training_part,
@@ -94,12 +94,11 @@ def train_model():
         focal_loss = FocalLoss()
         focaltversky_loss = FocalTverskyLoss()
         #optimizer = Lion(model.parameters(), lr=0.0000523)
-        #optimizer = torch.optim.AdamW(model.parameters(), lr=0.0000623, weight_decay=0.05)#0000523
+        optimizer = torch.optim.AdamW(model.parameters(), lr=0.0000623, weight_decay=0.05)#0000523
         #optimizer = torch.optim.NAdam(model.parameters(), lr=0.0000623, weight_decay=0.05)#0000523
-        optimizer = torch.optim.RAdam(model.parameters(), lr=0.000623, weight_decay=0.05)#0000523
-        #optimizer = torch.optim.Adam(model.parameters(), lr=0.0000623, weight_decay=0.05)#0000523
+        #optimizer = torch.optim.Adam(model.parameters(), lr=0.000123, weight_decay=0.05)#0000523
         #optimizer = torch.optim.Adamax(model.parameters(), lr=0.0000623, weight_decay=0.05)#0000523
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer,'min',factor=0.8,patience=10) # 3, 0.6
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer,'min',factor=0.7,patience=5) # 3, 0.6
 
         for epoch in range(300):
 
@@ -180,7 +179,7 @@ def train_model():
                 print('Validation Loss: {:.3f}'.format(val_loss/len(validationloader)))
                 print("learning rate : ",optimizer.state_dict()['param_groups'][0]['lr'])
                 print('-'*30)
-
+                lr = optimizer.state_dict()['param_groups'][0]['lr']
                 # Print accuracy
                 print('Accuracy for fold %d: %.3f %%' % (fold, 100.0 * (val_dice/len(validationloader))))
                 print('-'*30)
@@ -203,7 +202,7 @@ def train_model():
 
 
             #将数据保存为一维列表
-            list = [Time, Step, Train_loss, Validation_loss, Validation_dice]
+            list = [Time, Step, Train_loss, Validation_loss, Validation_dice,lr]
             file = pd.DataFrame([list])
             file.to_csv(f'ba_swinTAUNet_300-fold-{fold}.csv', mode='a', header=False, index=False)
         #记录模型最好的信息
