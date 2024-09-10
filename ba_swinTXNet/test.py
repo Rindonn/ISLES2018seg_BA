@@ -4,7 +4,7 @@
 @ Author: Rindon
 @ Date: 2024-04-16 11:35:28
 @ LastEditors: Rindon
-@ LastEditTime: 2024-04-23 10:06:53
+@ LastEditTime: 2024-09-09 14:20:02
 @ Description: 
 '''
 
@@ -30,7 +30,7 @@ from m_deeplab import DeepLabV3
 from m_unet import Unet
 from m_DeepTransUnet import DeepTransUnet
 '''
-from ba_swinTAUNet import swinTAUNet
+from ba_TXN_module import TXN_module
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -38,12 +38,12 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 modalities = ['OT', 'CT', 'CT_CBV', 'CT_CBF', 'CT_Tmax' , 'CT_MTT']
 dataset_m = ISLES2018Dataset(r'D:\dataset\ISLES_Dataset\ISLES2018_Training', modalities=modalities)
 #dataset_m = ISLES2018Dataset(r'D:\ba_ISLES2018\ISLES2018_Testing\TESTING', modalities=modalities)
-training_part, testing_part = torch.utils.data.random_split(dataset_m, (480,22), generator=torch.Generator().manual_seed(42)) # random_split(数据集，长度)随机将一个数据集分割成给定长度的不重叠的新数据集
+training_part, testing_part = torch.utils.data.random_split(dataset_m, (420,82), generator=torch.Generator().manual_seed(42)) # random_split(数据集，长度)随机将一个数据集分割成给定长度的不重叠的新数据集
 testset = testing_part
 testloader = DataLoader(testset)
 
-model = swinTAUNet()
-model.load_state_dict(torch.load(r'D:\ba_ISLES2018\record\swinTAUNet\4.21(68%)\ba_swinTAUNet_400-fold-0.pth'))
+model = TXN_module()
+model.load_state_dict(torch.load(r'D:\ISLES2018seg_BA\record\swinTXUnet\5.25（68%\ba_swinTXNet_300-fold-0.pth'))
 
 model.to(device)
 
@@ -87,3 +87,30 @@ with torch.no_grad():
         list = [Time, Img, Test_loss, Test_dice]
         file = pd.DataFrame([list])
         file.to_csv(f'swinTAUNet_test.csv', mode='a', header=False, index=False)
+    #计算统计数据
+    file = pd.read_csv(f'D:\ISLES2018seg_BA\swinTAUNet_test.csv',header=None)
+    #file = file[:,2].astype(float)
+    file.iloc[:, 2] = pd.to_numeric(file.iloc[:, 2], errors='coerce')  # 第3列
+    file.iloc[:, 3] = pd.to_numeric(file.iloc[:, 3], errors='coerce')  # 第4列
+    filtered_df1 = file[file.iloc[:, 2]<1]
+    mean_value = filtered_df1.iloc[:,2].mean()        # 平均值
+    max_value = filtered_df1.iloc[:,2].max()          # 最大值
+    min_value = filtered_df1.iloc[:,2].min()          # 最小值
+    variance_value = filtered_df1.iloc[:,2].var()     # 方差
+    std_dev_value = filtered_df1.iloc[:,2].std()      # 标准差
+    median_value = filtered_df1.iloc[:,2].median()    # 中位数
+    loss_row = {'mean_loss': mean_value, 'max_loss': max_value, 'min_loss': min_value, 
+        'variance_loss': variance_value,'std_dev_loss': std_dev_value,'median_loss': median_value} 
+    print(loss_row)
+    #print(file.dtypes)
+    # 计算所需的统计量
+    filtered_df = file[file.iloc[:, 3]>0]
+    mean_value = filtered_df.iloc[:,3].mean()        # 平均值
+    max_value = filtered_df.iloc[:,3].max()          # 最大值
+    min_value = filtered_df.iloc[:,3].min()          # 最小值
+    variance_value = filtered_df.iloc[:,3].var()     # 方差
+    std_dev_value = filtered_df.iloc[:,3].std()      # 标准差
+    median_value = filtered_df.iloc[:,3].median()    # 中位数
+    dice_row = {'mean_dice': mean_value, 'max_dice': max_value, 'min_dice': min_value, 
+        'variance_dice': variance_value,'std_dev_dice': std_dev_value,'median_dice': median_value} 
+    print(dice_row)

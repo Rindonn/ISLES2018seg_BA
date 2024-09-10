@@ -4,7 +4,7 @@
 @ Author: Rindon
 @ Date: 2024-04-16 11:35:28
 @ LastEditors: Rindon
-@ LastEditTime: 2024-09-09 14:14:11
+@ LastEditTime: 2024-09-09 14:44:13
 @ Description: 
 '''
 
@@ -23,14 +23,8 @@ from dataloader import ISLES2018Dataset
 from sklearn.model_selection import KFold
 from lion_pytorch import Lion
 from torch.optim import AdamW
-'''
-from m_transunet import TransUnet
-from m_fcn import FCN8s
-from m_deeplab import DeepLabV3
-from m_unet import Unet
-from m_DeepTransUnet import DeepTransUnet
-'''
-from ba_TAU_module import TAU_module
+
+from ba_swinTWUNet import swinTWUNet
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -42,8 +36,8 @@ training_part, testing_part = torch.utils.data.random_split(dataset_m, (420,82),
 testset = testing_part
 testloader = DataLoader(testset)
 
-model = TAU_module()
-model.load_state_dict(torch.load(r'D:\ISLES2018seg_BA\record\swinTAUNet\5.14(skip1_72%\ba_modTAU_skip1_300-fold-4.pth'))
+model = swinTWUNet()
+model.load_state_dict(torch.load(r'D:\ISLES2018seg_BA\record\swinTWUNet\5.4(62-64%\ba_swinTWUNet_300-fold-3.pth'))
 
 model.to(device)
 
@@ -92,7 +86,7 @@ with torch.no_grad():
     #file = file[:,2].astype(float)
     file.iloc[:, 2] = pd.to_numeric(file.iloc[:, 2], errors='coerce')  # 第3列
     file.iloc[:, 3] = pd.to_numeric(file.iloc[:, 3], errors='coerce')  # 第4列
-    filtered_df1 = file[file.iloc[:, 2]<0.95]
+    filtered_df1 = file[file.iloc[:, 2]<1]
     mean_value = filtered_df1.iloc[:,2].mean()        # 平均值
     max_value = filtered_df1.iloc[:,2].max()          # 最大值
     min_value = filtered_df1.iloc[:,2].min()          # 最小值
@@ -104,7 +98,7 @@ with torch.no_grad():
     print(loss_row)
     #print(file.dtypes)
     # 计算所需的统计量
-    filtered_df = file[file.iloc[:, 3]>0.05]
+    filtered_df = file[file.iloc[:, 3]>0]
     mean_value = filtered_df.iloc[:,3].mean()        # 平均值
     max_value = filtered_df.iloc[:,3].max()          # 最大值
     min_value = filtered_df.iloc[:,3].min()          # 最小值

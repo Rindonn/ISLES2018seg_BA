@@ -2,29 +2,9 @@
 # -*- coding: utf-8 -*-
 '''
 @ Author: Rindon
-@ Date: 2024-06-27 10:12:11
-@ LastEditors: Rindon
-@ LastEditTime: 2024-06-27 10:12:11
-@ Description: 
-'''
-
-def test():
-	'''
-	@ description: 
-	@ param {type} 
-	@ return: 
-	'''
-	pass
-
-if __name__ == "__main__":
-	test()
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-'''
-@ Author: Rindon
 @ Date: 2024-04-16 11:35:28
 @ LastEditors: Rindon
-@ LastEditTime: 2024-05-04 17:22:36
+@ LastEditTime: 2024-07-24 09:46:02
 @ Description: swinT and unet
 '''
 import torch
