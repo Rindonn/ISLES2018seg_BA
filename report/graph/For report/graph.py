@@ -4,7 +4,7 @@
 @ Author: Rindon
 @ Date: 2024-04-29 14:19:32
 @ LastEditors: Rindon
-@ LastEditTime: 2024-10-09 10:29:28
+@ LastEditTime: 2024-09-25 11:23:31
 @ Description: draw graph
 '''
 import pandas as pd
@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import os
 
-directory = r'D:\ISLES2018seg_BA\report\graph\For_GEEC2024' 
+directory = r'D:\ISLES2018seg_BA\report\graph\For report' 
 #directory = r'C:\Users\rindon\Desktop' 
 
 files = [f for f in os.listdir(directory) if f.endswith('.csv')]
@@ -36,7 +36,7 @@ plt.xlabel('Epoch',fontsize = 15)
 #plt.ylabel('Loss',fontsize = 15)
 plt.ylabel('Dice',fontsize = 15)
 plt.xlim((0,300))
-plt.ylim((0,0.75))
+plt.ylim((0,0.77))
 #plt.ylim((0.2,1))
 plt.gca().yaxis.set_major_locator(ticker.MultipleLocator(0.02)) 
 plt.grid()

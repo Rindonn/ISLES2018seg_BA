@@ -4,7 +4,7 @@
 @ Author: Rindon
 @ Date: 2024-04-16 11:35:28
 @ LastEditors: Rindon
-@ LastEditTime: 2024-09-09 14:42:02
+@ LastEditTime: 2024-10-06 13:46:57
 @ Description: 
 '''
 
@@ -24,7 +24,7 @@ from sklearn.model_selection import KFold
 from lion_pytorch import Lion
 from torch.optim import AdamW
 
-from ba_swinTUNet import swinTUNet
+from ba_swinTWUNet import swinTWUNet
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -32,12 +32,12 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 modalities = ['OT', 'CT', 'CT_CBV', 'CT_CBF', 'CT_Tmax' , 'CT_MTT']
 dataset_m = ISLES2018Dataset(r'D:\dataset\ISLES_Dataset\ISLES2018_Training', modalities=modalities)
 #dataset_m = ISLES2018Dataset(r'D:\ba_ISLES2018\ISLES2018_Testing\TESTING', modalities=modalities)
-training_part, testing_part = torch.utils.data.random_split(dataset_m, (420,82), generator=torch.Generator().manual_seed(42)) # random_split(数据集，长度)随机将一个数据集分割成给定长度的不重叠的新数据集
+training_part, testing_part = torch.utils.data.random_split(dataset_m, (420,82), generator=torch.Generator().manual_seed(41)) # random_split(数据集，长度)随机将一个数据集分割成给定长度的不重叠的新数据集
 testset = testing_part
 testloader = DataLoader(testset)
 
-model = swinTUNet()
-model.load_state_dict(torch.load(r'D:\ISLES2018seg_BA\record\swinTUNet\24.5.5(41-70%)\ba_swinTUNet_300-fold-1.pth'))
+model = swinTWUNet()
+model.load_state_dict(torch.load(r'D:\ISLES2018seg_BA\record\swinTWUNet\5.4(62-64%\ba_swinTWUNet_300-fold-0.pth'))
 
 model.to(device)
 
@@ -48,7 +48,7 @@ model.eval()
 
 # 创建csv文件
 df = pd.DataFrame(columns=['Time', 'Img', 'Test loss', 'Test dice'])# 列名
-df.to_csv(f'swinTAUNet_test.csv',index=False)  
+df.to_csv(f'swinTUNet_test.csv',index=False)  
 
 count = 0
 with torch.no_grad():
@@ -80,9 +80,9 @@ with torch.no_grad():
         #将数据保存为一维列表
         list = [Time, Img, Test_loss, Test_dice]
         file = pd.DataFrame([list])
-        file.to_csv(f'swinTAUNet_test.csv', mode='a', header=False, index=False)
+        file.to_csv(f'swinTUNet_test.csv', mode='a', header=False, index=False)
     #计算统计数据
-    file = pd.read_csv(f'D:\ISLES2018seg_BA\swinTAUNet_test.csv',header=None)
+    file = pd.read_csv(f'D:\ISLES2018seg_BA\swinTUNet_test.csv',header=None)
     #file = file[:,2].astype(float)
     file.iloc[:, 2] = pd.to_numeric(file.iloc[:, 2], errors='coerce')  # 第3列
     file.iloc[:, 3] = pd.to_numeric(file.iloc[:, 3], errors='coerce')  # 第4列
