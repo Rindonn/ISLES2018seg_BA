@@ -4,7 +4,7 @@
 @ Author: Rindon
 @ Date: 2024-04-16 11:35:28
 @ LastEditors: Rindon
-@ LastEditTime: 2024-10-06 13:46:57
+@ LastEditTime: 2024-10-14 10:27:48
 @ Description: 
 '''
 
@@ -24,7 +24,7 @@ from sklearn.model_selection import KFold
 from lion_pytorch import Lion
 from torch.optim import AdamW
 
-from ba_swinTWUNet import swinTWUNet
+from ba_swinTUNet import swinTUNet
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -36,8 +36,8 @@ training_part, testing_part = torch.utils.data.random_split(dataset_m, (420,82),
 testset = testing_part
 testloader = DataLoader(testset)
 
-model = swinTWUNet()
-model.load_state_dict(torch.load(r'D:\ISLES2018seg_BA\record\swinTWUNet\5.4(62-64%\ba_swinTWUNet_300-fold-0.pth'))
+model = swinTUNet()
+model.load_state_dict(torch.load(r'D:\ISLES2018seg_BA\record\swinTAUNet\8.15(76.6\ba_swinTAUNet_300-fold-1.pth'))
 
 model.to(device)
 

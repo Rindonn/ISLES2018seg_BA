@@ -4,7 +4,7 @@
 @ Author: Rindon
 @ Date: 2024-04-16 11:35:28
 @ LastEditors: Rindon
-@ LastEditTime: 2024-09-09 14:20:02
+@ LastEditTime: 2024-10-14 10:28:40
 @ Description: 
 '''
 
@@ -30,7 +30,7 @@ from m_deeplab import DeepLabV3
 from m_unet import Unet
 from m_DeepTransUnet import DeepTransUnet
 '''
-from ba_TXN_module import TXN_module
+from ba_swinTAUNet import swinTAUNet
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -42,8 +42,8 @@ training_part, testing_part = torch.utils.data.random_split(dataset_m, (420,82),
 testset = testing_part
 testloader = DataLoader(testset)
 
-model = TXN_module()
-model.load_state_dict(torch.load(r'D:\ISLES2018seg_BA\record\swinTXUnet\5.25（68%\ba_swinTXNet_300-fold-0.pth'))
+model = swinTAUNet()
+model.load_state_dict(torch.load(r'D:\ISLES2018seg_BA\record\swinTAUNet\8.15(76.6\ba_swinTAUNet_300-fold-1.pth'))
 
 model.to(device)
 

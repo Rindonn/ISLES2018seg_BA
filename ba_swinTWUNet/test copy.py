@@ -4,7 +4,7 @@
 @ Author: Rindon
 @ Date: 2024-04-16 11:35:28
 @ LastEditors: Rindon
-@ LastEditTime: 2024-09-09 14:44:13
+@ LastEditTime: 2024-10-14 10:28:22
 @ Description: 
 '''
 
@@ -37,7 +37,7 @@ testset = testing_part
 testloader = DataLoader(testset)
 
 model = swinTWUNet()
-model.load_state_dict(torch.load(r'D:\ISLES2018seg_BA\record\swinTWUNet\5.4(62-64%\ba_swinTWUNet_300-fold-3.pth'))
+model.load_state_dict(torch.load(r'D:\ISLES2018seg_BA\record\swinTAUNet\8.15(76.6\ba_swinTAUNet_300-fold-1.pth'))
 
 model.to(device)
 
