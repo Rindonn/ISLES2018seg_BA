@@ -4,7 +4,7 @@
 @ Author: Rindon
 @ Date: 2024-04-29 14:19:32
 @ LastEditors: Rindon
-@ LastEditTime: 2024-10-09 10:29:28
+@ LastEditTime: 2024-10-27 15:10:02
 @ Description: draw graph
 '''
 import pandas as pd
@@ -36,7 +36,7 @@ plt.xlabel('Epoch',fontsize = 15)
 #plt.ylabel('Loss',fontsize = 15)
 plt.ylabel('Dice',fontsize = 15)
 plt.xlim((0,300))
-plt.ylim((0,0.75))
+plt.ylim((0,0.78))
 #plt.ylim((0.2,1))
 plt.gca().yaxis.set_major_locator(ticker.MultipleLocator(0.02)) 
 plt.grid()

@@ -4,7 +4,7 @@
 @ Author: Rindon
 @ Date: 2024-04-19 09:28:04
 @ LastEditors: Rindon
-@ LastEditTime: 2024-04-23 10:06:04
+@ LastEditTime: 2024-11-06 10:19:11
 @ Description: 
 '''
 from torch.utils.data import Dataset
@@ -34,7 +34,7 @@ class ISLES2018Dataset(Dataset):
                 if modality != 'CT_4DPWI': #除了‘4DPWI’这个文件不要，其他的都要。change to modality in modalities but das slow
                     nii_path_name = os.path.join(case_path,file_path,file_path+'.nii') #把文件夹最里面的.nii文件的名字赋给nii_path_name
                     img = nib.load(nii_path_name)#用nib.load，把.nii文件的数据存储到img里面，.nii数据是一堆矩阵
-                    #print(img.shape)# 输出了每张图的维度
+                    print(img.shape)# 输出了每张图的维度
                     #OrthoSlicer3D(img.dataobj).show()#可以查看3d图像
                     case[modality] = img
 

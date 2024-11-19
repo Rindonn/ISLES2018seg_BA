@@ -4,14 +4,14 @@
 @ Author: Rindon
 @ Date: 2024-04-29 14:19:32
 @ LastEditors: Rindon
-@ LastEditTime: 2024-10-09 10:28:20
+@ LastEditTime: 2024-10-27 15:11:47
 @ Description: draw graph
 '''
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 #'swinTAUNet_2',0.789482,
 categories = [ 'swinTAUNet', 'swinTXUNet', 'DeepTransUnet', 'TransUnet', 'UNet', 'FCN8s']
-values = [ 0.733083, 0.683273, 0.635591, 0.587543, 0.622802, 0.621229]
+values = [ 0.789482, 0.683273, 0.635591, 0.587543, 0.622802, 0.621229]
 
 plt.figure(figsize=(12, 5))
 plt.bar(categories, values, color='skyblue')
