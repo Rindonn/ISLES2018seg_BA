@@ -4,7 +4,7 @@
 @ Author: Rindon
 @ Date: 2024-04-16 11:35:28
 @ LastEditors: Rindon
-@ LastEditTime: 2024-10-14 13:42:37
+@ LastEditTime: 2024-11-20 13:49:00
 @ Description: 
 '''
 
@@ -12,7 +12,7 @@ import pandas as pd
 import torch
 import torch.nn as nn
 import torch.utils.data
-
+import time
 
 from torchvision import transforms
 from datetime import datetime
@@ -23,13 +23,13 @@ from dataloader import ISLES2018Dataset
 from sklearn.model_selection import KFold
 from lion_pytorch import Lion
 from torch.optim import AdamW
-'''
+
 from m_transunet import TransUnet
 from m_fcn import FCN8s
 from m_deeplab import DeepLabV3
 from m_unet import Unet
 from m_DeepTransUnet import DeepTransUnet
-'''
+
 from ba_TAU_module import TAU_module
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -38,12 +38,12 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 modalities = ['OT', 'CT', 'CT_CBV', 'CT_CBF', 'CT_Tmax' , 'CT_MTT']
 dataset_m = ISLES2018Dataset(r'D:\dataset\ISLES_Dataset\ISLES2018_Training', modalities=modalities)
 #dataset_m = ISLES2018Dataset(r'D:\ba_ISLES2018\ISLES2018_Testing\TESTING', modalities=modalities)
-training_part, testing_part = torch.utils.data.random_split(dataset_m, (498,4), generator=torch.Generator().manual_seed(5)) # random_split(数据集，长度)随机将一个数据集分割成给定长度的不重叠的新数据集
+training_part, testing_part = torch.utils.data.random_split(dataset_m, (420,82), generator=torch.Generator().manual_seed(5)) # random_split(数据集，长度)随机将一个数据集分割成给定长度的不重叠的新数据集
 testset = testing_part
 testloader = DataLoader(testset)
 
-model = TAU_module()
-model.load_state_dict(torch.load(r'D:\ISLES2018seg_BA\record\swinTAUNet\8.15(76.6\ba_swinTAUNet_300-fold-1.pth'))
+model = Unet()
+model.load_state_dict(torch.load(r'D:\ISLES2018seg_BA\record\Others\ba_Unet_300-fold-1.pth'))
 
 model.to(device)
 
@@ -53,7 +53,7 @@ binarydice_loss = BinaryDiceLoss()
 model.eval()
 
 # 创建csv文件
-df = pd.DataFrame(columns=['Time', 'Img', 'Test loss', 'Test dice'])# 列名
+df = pd.DataFrame(columns=['Time', 'Img', 'Test loss', 'Test dice', 'pre_time'])# 列名
 df.to_csv(f'swinTAUNet_test.csv',index=False)  
 
 count = 0
@@ -63,6 +63,8 @@ with torch.no_grad():
 
     for i, data in enumerate(testloader, 0):
 
+        start = time.time()
+
         modalities, OT = data[0].to(device), data[1].to(device)
         
         pred = model(modalities)
@@ -71,6 +73,9 @@ with torch.no_grad():
 
         count += 1
         Img ="%d"%(count)
+
+        end = time.time()
+        pre_time = end - start
 
         print('Test Loss: {:.3f}'.format(loss))
         print('-'*30)
@@ -84,10 +89,10 @@ with torch.no_grad():
 
 
         #将数据保存为一维列表
-        list = [Time, Img, Test_loss, Test_dice]
+        list = [Time, Img, Test_loss, Test_dice, pre_time]
         file = pd.DataFrame([list])
         file.to_csv(f'swinTAUNet_test.csv', mode='a', header=False, index=False)
-    #计算统计数据
+    '''#计算统计数据
     file = pd.read_csv(f'D:\ISLES2018seg_BA\swinTAUNet_test.csv',header=None)
     #file = file[:,2].astype(float)
     file.iloc[:, 2] = pd.to_numeric(file.iloc[:, 2], errors='coerce')  # 第3列
@@ -113,4 +118,4 @@ with torch.no_grad():
     median_value = filtered_df.iloc[:,3].median()    # 中位数
     dice_row = {'mean_dice': mean_value, 'max_dice': max_value, 'min_dice': min_value, 
         'variance_dice': variance_value,'std_dev_dice': std_dev_value,'median_dice': median_value} 
-    print(dice_row)
+    print(dice_row)'''
